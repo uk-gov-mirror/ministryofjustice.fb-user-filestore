@@ -1,6 +1,8 @@
 class UserFileController < ApplicationController
   def create
-
-    render plain: Base64.decode64(params[:file])
+    result = File.open("files/result", "w")
+    result.print(Base64.decode64(params[:file]))
+    result.close
+    head :ok
   end
 end
