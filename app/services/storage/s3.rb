@@ -1,0 +1,46 @@
+require 'aws-sdk-s3'
+require 'tempfile'
+
+module Storage
+  class S3
+    def initialize(path:)
+      @path = path
+    end
+
+    def upload
+      object.upload_file(path)
+    end
+
+    def download
+      object.download_file(temp_file.path)
+    end
+
+    def exists?
+      object.exists?
+    end
+
+    def purge!
+      object.delete
+    end
+
+    private
+
+    attr_accessor :path
+
+    def object
+      @object ||= Aws::S3::Object.new(bucket_name, 'filename')
+    end
+
+    def temp_file
+      @temp_file ||= Tempfile.new('foo')
+    end
+
+    def bucket_name
+      'moj-formbuilder'
+    end
+
+    def client
+      @client ||= Aws::S3::Client.new
+    end
+  end
+end
