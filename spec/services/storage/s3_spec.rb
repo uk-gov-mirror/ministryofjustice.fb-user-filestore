@@ -17,7 +17,7 @@ RSpec.describe Storage::S3 do
     end
 
     after :each do
-      subject.purge!
+      subject.purge_from_s3!
     end
   end
 
@@ -34,8 +34,8 @@ RSpec.describe Storage::S3 do
     end
 
     after :each do
-      subject.purge!
-      subject.send(:temp_file).unlink
+      subject.purge_from_s3!
+      subject.purge_from_disk!
     end
   end
 end

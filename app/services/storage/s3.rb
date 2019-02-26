@@ -19,8 +19,12 @@ module Storage
       object.exists?
     end
 
-    def purge!
+    def purge_from_s3!
       object.delete
+    end
+
+    def purge_from_disk!
+      temp_file.unlink
     end
 
     private
