@@ -6,6 +6,7 @@ ruby '2.5.1'
 gem 'rails', '~> 5.2.1', '>= 5.2.1.1'
 gem 'pg', '>= 0.18', '< 2.0'
 gem 'puma', '~> 3.11'
+gem 'aws-sdk-s3', '~> 1'
 
 group :development, :test do
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
