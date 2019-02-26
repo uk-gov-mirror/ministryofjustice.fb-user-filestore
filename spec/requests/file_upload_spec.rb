@@ -25,12 +25,17 @@ describe 'FileUpload API', type: :request do
         post "/service/service-slug/user/user-id", :params => json.to_json, :headers => headers
       end
 
+      after do
+        File.delete('files/result')
+      end
+
       it 'has status 200' do
         expect(response).to have_http_status(200)
       end
 
-      it "reads content of uploaded file" do
-        expect(response.body).to eq("Hello World")
+      it 'saves the decoded data to a local file' do
+        decoded_data = File.open('files/result').read
+        expect(file).to eq(decoded_data)
       end
     end
   end
