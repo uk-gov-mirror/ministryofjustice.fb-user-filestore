@@ -32,7 +32,7 @@ module Storage
     attr_accessor :path
 
     def object
-      @object ||= Aws::S3::Object.new(bucket_name, 'filename')
+      @object ||= Aws::S3::Object.new(bucket_name, 'filename', client: client)
     end
 
     def temp_file

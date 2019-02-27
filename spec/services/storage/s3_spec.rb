@@ -1,6 +1,12 @@
 require 'rails_helper'
 
 RSpec.describe Storage::S3 do
+  let(:test_client) { Aws::S3::Client.new(stub_responses: true) }
+
+  before :each do
+    allow(Aws::S3::Client).to receive(:new).and_return(test_client)
+  end
+
   let(:path) do
     file_fixture('lorem_ipsum.txt')
   end
@@ -10,6 +16,13 @@ RSpec.describe Storage::S3 do
   end
 
   describe '#upload' do
+    before :each do
+      test_client.stub_responses(:head_object, [
+        false,
+        { content_length: 150 }
+      ])
+    end
+
     it 'uploads file to s3' do
       expect(subject.exists?).to be_falsey
       subject.upload
@@ -22,6 +35,12 @@ RSpec.describe Storage::S3 do
   end
 
   describe '#download' do
+    before :each do
+      test_client.stub_responses(:get_object, [
+        { body: "lorem ipsum\n" }
+      ])
+    end
+
     it 'downloads file from s3' do
       subject.upload
       subject.download
