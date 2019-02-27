@@ -4,30 +4,19 @@ require 'pry'
 
 describe 'FileUpload API', type: :request do
   describe 'a POST /service/{service_slug}/{user_id} request' do
+    before do
+      headers = { 'CONTENT_TYPE' => 'application/json' }
+      post '/service/service-slug/user/user-id', :params => json.to_json, :headers => headers
+    end
+
+    after do
+      File.delete('files/result') if File.exist?('files/result')
+    end
+
     describe 'upload with JSON payload' do
-      let(:file) { file_fixture("hello_world.txt").read }
+      let(:file) { file_fixture('hello_world.txt').read }
       let(:encoded_file) { Base64.encode64(file) }
-      let(:json) do
-        {
-            "iat": "{timestamp}",
-            "encrypted_user_id_and_token": "{userId+userToken encrypted via AES-256 with the serviceToken as the key}",
-            "file": encoded_file,
-            "policy": {
-                "allowed_types": [],
-                "max_size": "1024",
-                "expires": "28d"
-            }
-        }
-      end
-
-      before do
-        headers = { "CONTENT_TYPE" => "application/json" }
-        post "/service/service-slug/user/user-id", :params => json.to_json, :headers => headers
-      end
-
-      after do
-        File.delete('files/result')
-      end
+      let(:json) { json_format(encoded_file) }
 
       it 'has status 200' do
         expect(response).to have_http_status(200)
@@ -38,5 +27,30 @@ describe 'FileUpload API', type: :request do
         expect(file).to eq(decoded_data)
       end
     end
+
+    describe 'file exceeds max file size' do
+      let(:file) { file_fixture('sample.txt').read }
+      let(:encoded_file) { Base64.encode64(file) }
+      let(:json) { json_format(encoded_file) }
+
+      context 'returns error if file size is too large' do
+        it 'has status 400' do
+          expect(response).to have_http_status(400)
+        end
+      end
+    end
+  end
+
+  def json_format(encoded_file)
+    {
+        "iat": '{timestamp}',
+        "encrypted_user_id_and_token": '{userId+userToken encrypted via AES-256 with the serviceToken as the key}',
+        "file": encoded_file,
+        "policy": {
+            "allowed_types": [],
+            "max_size": '1024',
+            "expires": '28d'
+        }
+    }
   end
 end
