@@ -28,9 +28,23 @@ RSpec.describe Storage::S3::Downloader do
 
       downloaded_path = subject.send(:temp_file).path
 
+      expect(downloaded_path).to include('lorem_ipsum.txt')
+
       contents = File.open(downloaded_path).read
 
       expect(contents).to eql("lorem ipsum\n")
+    end
+
+    context 'when missing metadata' do
+      it 'uses random hex string for filename' do
+        allow(subject.send(:object)).to receive(:metadata).and_return({})
+
+        subject.download
+
+        downloaded_path = subject.send(:temp_file).path
+
+        expect(downloaded_path).to match(/[a-f0-9]{32}/)
+      end
     end
 
     after :each do
