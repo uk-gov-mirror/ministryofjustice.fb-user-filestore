@@ -1,15 +1,16 @@
 require 'aws-sdk-s3'
+require 'pathname'
 
 module Storage
   module S3
     class Uploader
       def initialize(path:, key:)
-        @path = path
+        @path = Pathname.new(path)
         @key = key
       end
 
       def upload
-        object.upload_file(path)
+        object.upload_file(path, { metadata: { 'filename_with_extension' => filename_with_extension } })
       end
 
       def exists?
@@ -23,6 +24,10 @@ module Storage
       private
 
       attr_accessor :path, :key
+
+      def filename_with_extension
+        path.basename.to_s
+      end
 
       def object
         @object ||= Aws::S3::Object.new(bucket_name, key, client: client)

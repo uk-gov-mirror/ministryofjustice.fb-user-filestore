@@ -29,7 +29,11 @@ RSpec.describe Storage::S3::Uploader do
     end
 
     it 'adds meta data with filename with extension' do
+      subject.upload
 
+      downloader = Storage::S3::Downloader.new(key: key)
+      object = downloader.send(:object)
+      expect(object.metadata).to eql({'filename_with_extension' => 'lorem_ipsum.txt'})
     end
 
     after :each do
