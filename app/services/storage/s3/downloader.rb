@@ -4,8 +4,8 @@ require 'tempfile'
 module Storage
   module S3
     class Downloader
-      def initialize(path:)
-        @path = path
+      def initialize(key:)
+        @key = key
       end
 
       def download
@@ -26,10 +26,10 @@ module Storage
 
       private
 
-      attr_accessor :path
+      attr_accessor :key
 
       def object
-        @object ||= Aws::S3::Object.new(bucket_name, 'filename', client: client)
+        @object ||= Aws::S3::Object.new(bucket_name, key, client: client)
       end
 
       def temp_file

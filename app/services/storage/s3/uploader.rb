@@ -3,8 +3,9 @@ require 'aws-sdk-s3'
 module Storage
   module S3
     class Uploader
-      def initialize(path:)
+      def initialize(path:, key:)
         @path = path
+        @key = key
       end
 
       def upload
@@ -21,10 +22,10 @@ module Storage
 
       private
 
-      attr_accessor :path
+      attr_accessor :path, :key
 
       def object
-        @object ||= Aws::S3::Object.new(bucket_name, 'filename', client: client)
+        @object ||= Aws::S3::Object.new(bucket_name, key, client: client)
       end
 
       def bucket_name
