@@ -26,6 +26,10 @@ describe 'FileUpload API', type: :request do
         decoded_data = File.open('files/result').read
         expect(file).to eq(decoded_data)
       end
+
+      it 'renders success JSON' do
+        expect(JSON.parse(response.body)).to eq({ name: 'success' }.as_json)
+      end
     end
 
     describe 'file exceeds max file size' do
@@ -37,10 +41,15 @@ describe 'FileUpload API', type: :request do
         it 'has status 400' do
           expect(response).to have_http_status(400)
         end
+
+        it 'returns JSON with invalid.too-large content' do
+          result = JSON.parse(response.body)
+          expect(result['name']).to eq('invalid.too-large')
+        end
       end
     end
 
-    describe 'check file types' do
+    describe 'checking file types' do
       context 'accepts supported mime types' do
         describe 'plain text format' do
           let(:file) { file_fixture('hello_world.txt').read }
@@ -122,6 +131,11 @@ describe 'FileUpload API', type: :request do
           it 'has status 400' do
             expect(response).to have_http_status(400)
           end
+
+          it 'returns JSON with invalid type content' do
+            result = JSON.parse(response.body)
+            expect(result['name']).to eq('invalid type')
+          end
         end
 
         describe 'html format' do
@@ -131,6 +145,11 @@ describe 'FileUpload API', type: :request do
 
           it 'has status 400' do
             expect(response).to have_http_status(400)
+          end
+
+          it 'returns JSON with invalid type content' do
+            result = JSON.parse(response.body)
+            expect(result['name']).to eq('invalid type')
           end
         end
       end
