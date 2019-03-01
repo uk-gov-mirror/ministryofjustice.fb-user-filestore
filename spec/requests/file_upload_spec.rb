@@ -156,6 +156,23 @@ describe 'FileUpload API', type: :request do
     end
   end
 
+  describe 'generate fingerprint' do
+    let(:file) { file_fixture('document.pdf') }
+    let(:regex) { /\A[0-9a-f]{32,128}\z/i }
+    let(:fingerprint) { UserFileController.fingerprint(file) }
+    it 'returns a SHA1 checksum' do
+      expect(fingerprint).to eq(Digest::SHA1.file(file).to_s)
+    end
+
+    it 'is 40 characters long' do
+      expect(fingerprint.length).to eq(40)
+    end
+
+    it 'is a valid checksum' do
+      expect(regex.match?(fingerprint)).to eq(true)
+    end
+  end
+
   def json_format(encoded_file)
     {
       "iat": '{timestamp}',
