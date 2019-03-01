@@ -25,4 +25,8 @@ class UserFileController < ApplicationController
                    name: 'invalid type',
                    type: type }, status: 400
   end
+
+  def self.fingerprint(file)
+    Digest::SHA1.file(file).to_s
+  end
 end
