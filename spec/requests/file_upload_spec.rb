@@ -156,20 +156,19 @@ describe 'FileUpload API', type: :request do
     end
   end
 
-  describe 'generate fingerprint' do
+  describe 'generate filename' do
     let(:file) { file_fixture('document.pdf') }
     let(:regex) { /\A[0-9a-f]{32,128}\z/i }
-    let(:fingerprint) { UserFileController.fingerprint(file) }
-    it 'returns a SHA1 checksum' do
-      expect(fingerprint).to eq(Digest::SHA1.file(file).to_s)
-    end
+    let(:user_id) { 'user-id' }
+    let(:token) { 'some-service-token' }
+    let(:filename) { UserFileController.generate_filename(file, user_id, token) }
 
     it 'is 40 characters long' do
-      expect(fingerprint.length).to eq(40)
+      expect(filename.length).to eq(40)
     end
 
     it 'is a valid checksum' do
-      expect(regex.match?(fingerprint)).to eq(true)
+      expect(regex.match?(filename)).to eq(true)
     end
   end
 

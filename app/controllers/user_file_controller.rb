@@ -26,7 +26,8 @@ class UserFileController < ApplicationController
                    type: type }, status: 400
   end
 
-  def self.fingerprint(file)
-    Digest::SHA1.file(file).to_s
+  def self.generate_filename(file, user_id, service_token)
+    checksum = Digest::SHA1.file(file).to_s
+    Digest::SHA1.hexdigest(service_token + user_id + checksum)
   end
 end
