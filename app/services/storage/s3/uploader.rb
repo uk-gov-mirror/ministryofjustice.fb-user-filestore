@@ -34,7 +34,7 @@ module Storage
       end
 
       def bucket_name
-        'moj-formbuilder'
+        ENV['AWS_S3_BUCKET_NAME']
       end
 
       def client
