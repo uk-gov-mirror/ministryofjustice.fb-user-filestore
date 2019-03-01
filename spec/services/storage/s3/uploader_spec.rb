@@ -1,10 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe Storage::S3::Uploader do
-  let(:test_client) { Aws::S3::Client.new(stub_responses: true) }
+  let(:test_client) { Aws::S3::Client.new(stub_responses: stub_responses) }
 
   before :each do
-    # allow(Aws::S3::Client).to receive(:new).and_return(test_client)
+    allow(Aws::S3::Client).to receive(:new).and_return(test_client)
   end
 
   let(:path) { file_fixture('lorem_ipsum.txt') }
@@ -15,25 +15,39 @@ RSpec.describe Storage::S3::Uploader do
   end
 
   describe '#upload' do
-    before :each do
-      test_client.stub_responses(:head_object, [
-        false,
-        { content_length: 150 }
-      ])
+    describe do
+      let(:stub_responses) do
+        {
+          head_object: [ false, { content_length: 150 } ],
+          put_object: [{}],
+        }
+      end
+
+      it 'uploads file to s3' do
+        expect(subject.exists?).to be_falsey
+        subject.upload
+        expect(subject.exists?).to be_truthy
+      end
     end
 
-    it 'uploads file to s3' do
-      expect(subject.exists?).to be_falsey
-      subject.upload
-      expect(subject.exists?).to be_truthy
-    end
+    describe do
+      let(:stub_responses) do
+        {
+          head_object: [
+            { content_length: 150, metadata: { 'filename_with_extension' => 'lorem_ipsum.txt' } },
+            { content_length: 150, metadata: { 'filename_with_extension' => 'lorem_ipsum.txt' } }
+          ],
+          put_object: [{}],
+        }
+      end
 
-    it 'adds meta data with filename with extension' do
-      subject.upload
+      it 'adds meta data with filename with extension' do
+        subject.upload
 
-      downloader = Storage::S3::Downloader.new(key: key)
-      object = downloader.send(:object)
-      expect(object.metadata).to eql({'filename_with_extension' => 'lorem_ipsum.txt'})
+        downloader = Storage::S3::Downloader.new(key: key)
+        object = downloader.send(:object)
+        expect(object.metadata).to eql({'filename_with_extension' => 'lorem_ipsum.txt'})
+      end
     end
 
     after :each do

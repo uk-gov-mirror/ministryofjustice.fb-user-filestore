@@ -38,7 +38,7 @@ module Storage
       end
 
       def filename_with_extension
-        object.metadata.fetch('filename_with_extension', SecureRandom.hex)
+        @filename_with_extension ||= object.metadata.fetch('filename_with_extension', SecureRandom.hex)
       end
 
       def bucket_name
