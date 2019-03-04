@@ -30,4 +30,17 @@ class UserFileController < ApplicationController
     checksum = Digest::SHA1.file(file).to_s
     Digest::SHA1.hexdigest(service_token + user_id + checksum)
   end
+
+  def self.encrypt_filename(key, filename, iv)
+    cipher = OpenSSL::Cipher.new 'AES-256-CBC'
+    cipher.encrypt
+    cipher.iv = iv
+    cipher.key = key
+    encrypted = cipher.update(filename) + cipher.final
+    encrypted.unpack1('H*')
+  end
+
+  def self.hashed_digest(filename)
+    Digest::SHA1.hexdigest(filename)
+  end
 end
