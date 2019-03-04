@@ -20,6 +20,10 @@ class UserFileController < ApplicationController
     render json: { name: full_filename(params[:service_slug], params[:user_id], hashed_filename) }, status: 200
   end
 
+  def show
+    headers['x-access-token'] = 'ENCRYPTED_USER_ID + TOKEN'
+  end
+
   private
 
   def error_large_file(size)
