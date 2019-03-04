@@ -172,6 +172,32 @@ describe 'FileUpload API', type: :request do
     end
   end
 
+  describe 'encrypt filename' do
+    let(:filename) { 'ThisIsASecretFilename' }
+    let(:encrypted_token) { 'abcdefghijklmnopqrstuvwxyz012345' }
+    let(:iv) { '1234567890123451' }
+    let(:encrypted_filename) { UserFileController.encrypt_filename(encrypted_token, filename, iv) }
+    let(:result) { 'eaa58686f00963662df447e9a7d10d362db317671ebf42f0b5b17c1ef39a651d' }
+
+    it 'returns an AES-256 encrypted filename' do
+      expect(encrypted_filename).to eq(result)
+    end
+  end
+
+  describe 'hash digest of encrypted filename' do
+    let(:filename) { 'eaa58686f00963662df447e9a7d10d362db317671ebf42f0b5b17c1ef39a651d' }
+    let(:digest) { UserFileController.hashed_digest(filename) }
+    let(:result) { 'a604e01032769f3e2cef440e6382813f76a835ae' }
+
+    it 'is 40 characters long' do
+      expect(digest.length).to eq(40)
+    end
+
+    it 'returns the expected checksum' do
+      expect(digest).to eq(result)
+    end
+  end
+
   def json_format(encoded_file)
     {
       "iat": '{timestamp}',
