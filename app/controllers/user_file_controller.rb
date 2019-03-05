@@ -3,19 +3,19 @@ class UserFileController < ApplicationController
   IV = '1234567890123451'.freeze
 
   def create
-    @file_manager = FileManager.new(params[:file], { max_size: params[:policy][:max_size] })
+    @file_manager = FileManager.new(params[:file], {
+                                      max_size: params[:policy][:max_size],
+                                      allowed_types: params[:policy][:allowed_types]
+                                    })
     @file_manager.save_to_disk
 
     if @file_manager.file_too_large?
       return error_large_file(@file_manager.file_size)
     end
 
-    # unless @file_manager.type_permitted?
-    #   # return error
-    # end
-
-    mime_type = `file --b --mime-type 'tmp/files/quarantine/#{@file_manager.random_filename}'`.strip
-    return error_unsupported_file_type(mime_type) unless params[:policy][:allowed_types].include?(mime_type)
+    unless @file_manager.type_permitted?
+      return error_unsupported_file_type(@file_manager.mime_type)
+    end
 
     filename = generate_filename(@file_manager.file, params[:user_id], SERVICE_TOKEN)
     encrypted_filename = encrypt_filename(params[:encrypted_user_id_and_token], @file_manager.random_filename, IV)

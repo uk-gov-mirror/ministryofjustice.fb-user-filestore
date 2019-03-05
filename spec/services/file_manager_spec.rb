@@ -46,6 +46,34 @@ RSpec.describe FileManager do
     end
   end
 
+  describe '#type_permitted?' do
+  let(:file) { file_fixture('image.png') }
+
+    before :each do
+      subject.save_to_disk
+    end
+
+    context 'when file is permitted' do
+      subject do
+        described_class.new(encoded_file, allowed_types: ['image/png'])
+      end
+
+      it 'returns true' do
+        expect(subject.type_permitted?).to be_truthy
+      end
+    end
+
+    context 'when file is not permitted' do
+      subject do
+        described_class.new(encoded_file, allowed_types: ['plain/text'])
+      end
+
+      it 'returns false' do
+        expect(subject.type_permitted?).to be_falsey
+      end
+    end
+  end
+
   after :each do
     FileUtils.rm(Dir.glob('tmp/files/quarantine/*'), force: true)
   end

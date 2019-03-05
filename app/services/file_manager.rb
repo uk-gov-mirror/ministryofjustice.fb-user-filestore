@@ -6,6 +6,7 @@ class FileManager
   def initialize(encoded_file, options = {})
     @encoded_file = encoded_file
     @max_size = options[:max_size] ? options[:max_size].to_i : nil
+    @allowed_types = options.fetch(:allowed_types, [])
   end
 
   def save_to_disk
@@ -26,7 +27,15 @@ class FileManager
     @file_size = File.size("tmp/files/quarantine/#{random_filename}")
   end
 
+  def type_permitted?
+    allowed_types.include?(mime_type)
+  end
+
+  def mime_type
+    @mime_type ||= `file --b --mime-type 'tmp/files/quarantine/#{random_filename}'`.strip
+  end
+
   private
 
-  attr_accessor :encoded_file, :max_size
+  attr_accessor :encoded_file, :max_size, :allowed_types
 end
