@@ -26,9 +26,15 @@ describe 'FileUpload API', type: :request do
         expect(response).to have_http_status(200)
       end
 
-      it 'saves the decoded data to a local file' do
+      it 'saves the decoded data to a local file in quarantine' do
         filename = controller.send(:random_filename)
         decoded_data = File.open("tmp/files/quarantine/#{filename}").read
+        expect(file).to eq(decoded_data)
+      end
+
+      it 'saves the decoded data to a local file' do
+        filename = controller.send(:random_filename)
+        decoded_data = File.open("tmp/files/#{filename}").read
         expect(file).to eq(decoded_data)
       end
     end

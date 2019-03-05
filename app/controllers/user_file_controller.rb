@@ -3,10 +3,14 @@ class UserFileController < ApplicationController
   IV = '1234567890123451'.freeze
 
   def create
-    @file_manager = FileManager.new(params[:file], {
+    @file_manager = FileManager.new(encoded_file: params[:file],
+                                    user_id: params[:user_id],
+                                    service_token: params[:service_slug], # TODO: get token
+                                    options: {
                                       max_size: params[:policy][:max_size],
                                       allowed_types: params[:policy][:allowed_types]
                                     })
+
     @file_manager.save_to_disk
 
     if @file_manager.file_too_large?
@@ -17,11 +21,14 @@ class UserFileController < ApplicationController
       return error_unsupported_file_type(@file_manager.mime_type)
     end
 
-    filename = generate_filename(@file_manager.file, params[:user_id], SERVICE_TOKEN)
-    encrypted_filename = encrypt_filename(params[:encrypted_user_id_and_token], @file_manager.random_filename, IV)
-    hashed_filename = hashed_digest(encrypted_filename)
+    # filename = generate_filename(@file_manager.file, params[:user_id], SERVICE_TOKEN)
+    # encrypted_filename = encrypt_filename(params[:encrypted_user_id_and_token], @file_manager.random_filename, IV)
+    # hashed_filename = hashed_digest(encrypted_filename)
 
-    render json: { name: full_filename(params[:service_slug], params[:user_id], hashed_filename) }, status: 200
+    @file_manager.upload
+    # delete from quarantine
+
+    render json: { }, status: 200
   end
 
   def show
@@ -63,9 +70,5 @@ class UserFileController < ApplicationController
 
   def full_filename(service_slug, user_id, filename)
     "#{service_slug}/#{user_id}/#{filename}"
-  end
-
-  def random_filename
-    @file_manager.random_filename
   end
 end
