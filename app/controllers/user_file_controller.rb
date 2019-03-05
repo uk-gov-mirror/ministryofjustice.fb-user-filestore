@@ -3,17 +3,17 @@ class UserFileController < ApplicationController
   IV = '1234567890123451'.freeze
 
   def create
-    result = File.open('files/result', 'wb')
-    result.write(Base64.decode64(params[:file]))
-    result.close
+    file = File.open(Rails.root.join('tmp/files/quarantine/', random_filename), 'wb')
+    file.write(Base64.decode64(params[:file]))
+    file.close
 
-    file_size = File.size('files/result')
+    file_size = File.size("tmp/files/quarantine/#{random_filename}")
     return error_large_file(file_size) if file_size > params[:policy][:max_size].to_i
 
-    mime_type = `file --b --mime-type 'files/result'`.strip
+    mime_type = `file --b --mime-type 'tmp/files/quarantine/#{random_filename}'`.strip
     return error_unsupported_file_type(mime_type) unless params[:policy][:allowed_types].include?(mime_type)
 
-    filename = generate_filename(result, params[:user_id], SERVICE_TOKEN)
+    filename = generate_filename(file, params[:user_id], SERVICE_TOKEN)
     encrypted_filename = encrypt_filename(params[:encrypted_user_id_and_token], filename, IV)
     hashed_filename = hashed_digest(encrypted_filename)
 
@@ -59,5 +59,9 @@ class UserFileController < ApplicationController
 
   def full_filename(service_slug, user_id, filename)
     "#{service_slug}/#{user_id}/#{filename}"
+  end
+
+  def random_filename
+    @random_filename ||= SecureRandom.hex
   end
 end

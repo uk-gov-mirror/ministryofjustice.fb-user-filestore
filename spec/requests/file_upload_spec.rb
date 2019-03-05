@@ -14,7 +14,7 @@ describe 'FileUpload API', type: :request do
     end
 
     after do
-      File.delete('files/result') if File.exist?('files/result')
+      FileUtils.rm('tmp/files/quarantine/*', force: true)
     end
 
     describe 'upload with JSON payload' do
@@ -27,7 +27,8 @@ describe 'FileUpload API', type: :request do
       end
 
       it 'saves the decoded data to a local file' do
-        decoded_data = File.open('files/result').read
+        filename = controller.send(:random_filename)
+        decoded_data = File.open("tmp/files/quarantine/#{filename}").read
         expect(file).to eq(decoded_data)
       end
     end
