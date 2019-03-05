@@ -10,6 +10,7 @@ class FileManager
   end
 
   def save_to_disk
+    ensure_quarantine_folder_exists
     @file = File.open(Rails.root.join('tmp/files/quarantine/', random_filename), 'wb')
     @file.write(Base64.decode64(encoded_file))
     @file.close
@@ -36,6 +37,10 @@ class FileManager
   end
 
   private
+
+  def ensure_quarantine_folder_exists
+    FileUtils.mkdir_p(Rails.root.join('tmp/files/quarantine/'))
+  end
 
   attr_accessor :encoded_file, :max_size, :allowed_types
 end
