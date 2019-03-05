@@ -3,6 +3,10 @@ require 'base64'
 require 'pry'
 
 describe 'FileUpload API', type: :request do
+  before :each do
+    allow_any_instance_of(ApplicationController).to receive(:verify_token!)
+  end
+
   describe 'a POST /service/{service_slug}/{user_id} request' do
     before do
       headers = { 'CONTENT_TYPE' => 'application/json' }
