@@ -29,8 +29,8 @@ describe 'FileUpload API', type: :request do
         post '/service/service-slug/user/user-id', params: json.to_json, headers: headers
       end
 
-      it 'has status 200' do
-        expect(response).to have_http_status(200)
+      it 'has status 201' do
+        expect(response).to have_http_status(201)
       end
 
       it 'saves the decoded data to a local file in quarantine' do
