@@ -43,10 +43,29 @@ class UserFileController < ApplicationController
   end
 
   def show
-    headers['x-access-token'] = 'ENCRYPTED_USER_ID + TOKEN'
+    if downloader.exists?
+      downloader.download
+      file = downloader.file
+      data = file.read
+      encoded_file = Base64.encode64(data)
+
+      render json: { file: encoded_file }, status: 200
+    else
+      render json: { code: 404, name: 'not-found' }, status: 404
+    end
   end
 
   private
+
+  def downloader
+    @downloader ||= Storage::Disk::Downloader.new(key: key)
+  end
+
+  def key
+    @key ||= KeyForFile.new(user_id: params[:user_id],
+                            service_slug: params[:service_slug],
+                            file_fingerprint: params[:fingerprint]).call
+  end
 
   def error_large_file(size)
     render json: { code: 400,

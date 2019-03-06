@@ -9,7 +9,7 @@ module Storage
       end
 
       def download
-        FileUtils.cp(path, temp_file.path)
+        FileUtils.cp(path, file.path)
       end
 
       def exists?
@@ -22,16 +22,16 @@ module Storage
       def purge_from_destination!
       end
 
+      def file
+        @file ||= Tempfile.new(filename)
+      end
+
       private
 
       attr_accessor :key
 
       def path
         Rails.root.join('tmp/files', key)
-      end
-
-      def temp_file
-        @temp_file ||= Tempfile.new(filename)
       end
 
       def filename

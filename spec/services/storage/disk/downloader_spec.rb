@@ -16,7 +16,7 @@ RSpec.describe Storage::Disk::Downloader do
       it 'downloads file from s3' do
         subject.download
 
-        downloaded_path = subject.send(:temp_file).path
+        downloaded_path = subject.send(:file).path
 
         contents = File.open(downloaded_path).read
 

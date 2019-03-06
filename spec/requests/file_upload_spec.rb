@@ -148,18 +148,6 @@ describe 'FileUpload API', type: :request do
     end
   end
 
-  describe 'a GET /service/{service_slug}/{user_id}/{fingerprint} request' do
-    before do
-      get '/service/service-slug/user/user-id/fingerprint'
-    end
-
-    describe 'Add header to response header' do
-      it 'sets the {encrypted_user_id and token} as a x-header' do
-        expect(response.headers['x-access-token']).to eq('ENCRYPTED_USER_ID + TOKEN')
-      end
-    end
-  end
-
   def json_format(encoded_file)
     {
         "iat": '{timestamp}',
