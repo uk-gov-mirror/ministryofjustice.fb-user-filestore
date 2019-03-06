@@ -27,14 +27,14 @@ describe 'FileUpload API', type: :request do
       end
 
       it 'saves the decoded data to a local file in quarantine' do
-        filename = controller.send(:random_filename)
-        decoded_data = File.open("tmp/files/quarantine/#{filename}").read
+        path_to_file = controller.instance_variable_get(:@file_manager).path_to_file
+        decoded_data = File.open(path_to_file).read
         expect(file).to eq(decoded_data)
       end
 
       it 'saves the decoded data to a local file' do
-        filename = controller.send(:random_filename)
-        decoded_data = File.open("tmp/files/#{filename}").read
+        path_to_file = "./tmp/files/#{controller.instance_variable_get(:@file_manager).send(:key)}"
+        decoded_data = File.open(path_to_file).read
         expect(file).to eq(decoded_data)
       end
     end
