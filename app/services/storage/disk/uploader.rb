@@ -19,6 +19,10 @@ module Storage
         File.exist?(destination_path)
       end
 
+      def self.purge_destination!
+        FileUtils.rm_r(Rails.root.join('tmp/files/'))
+      end
+
       private
 
       attr_accessor :path, :key

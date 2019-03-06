@@ -51,6 +51,10 @@ class FileManager
     @file_fingerprint ||= Digest::SHA256.file(file).to_s
   end
 
+  def file_already_exists?
+    uploader.exists?
+  end
+
   private
 
   def uploader

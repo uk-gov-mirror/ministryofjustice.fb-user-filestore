@@ -26,6 +26,8 @@ describe 'FileUpload API', type: :request do
       end
 
       before do
+        Storage::Disk::Uploader.purge_destination!
+
         post '/service/service-slug/user/user-id', params: json.to_json, headers: headers
       end
 
@@ -52,6 +54,16 @@ describe 'FileUpload API', type: :request do
         expect(body['size']).to eql(11)
         expect(body['type']).to eql('text/plain')
         expect(body['date']).to eql(1546300800)
+      end
+
+      describe 'uploading the same file again' do
+        before do
+          post '/service/service-slug/user/user-id', params: json.to_json, headers: headers
+        end
+
+        it 'returns 204 no content' do
+          expect(response.status).to eql(204)
+        end
       end
     end
 

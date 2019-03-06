@@ -21,6 +21,10 @@ class UserFileController < ApplicationController
       return error_unsupported_file_type(@file_manager.mime_type)
     end
 
+    if @file_manager.file_already_exists?
+      return head :no_content
+    end
+
     # async?
     @file_manager.upload
 
