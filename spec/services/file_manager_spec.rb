@@ -5,11 +5,12 @@ RSpec.describe FileManager do
   let(:encoded_file) { Base64.encode64(file.read) }
   let(:user_id) { SecureRandom.uuid }
   let(:service_token) { SecureRandom.hex }
+  let(:service_slug) { 'service-slug' }
 
   subject do
     described_class.new(encoded_file: encoded_file,
                         user_id: user_id,
-                        service_token: service_token)
+                        service_slug: service_slug)
   end
 
   describe '#key' do
@@ -43,7 +44,7 @@ RSpec.describe FileManager do
       subject do
         described_class.new(encoded_file: encoded_file,
                             user_id: user_id,
-                            service_token: service_token,
+                            service_slug: service_slug,
                             options: { max_size: '1300' })
       end
 
@@ -56,7 +57,7 @@ RSpec.describe FileManager do
       subject do
         described_class.new(encoded_file: encoded_file,
                             user_id: user_id,
-                            service_token: service_token,
+                            service_slug: service_slug,
                             options: { max_size: '1400' })
       end
 
@@ -77,7 +78,7 @@ RSpec.describe FileManager do
       subject do
         described_class.new(encoded_file: encoded_file,
                             user_id: user_id,
-                            service_token: service_token,
+                            service_slug: service_slug,
                             options: { allowed_types: ['image/png'] })
       end
 
@@ -90,7 +91,7 @@ RSpec.describe FileManager do
       subject do
         described_class.new(encoded_file: encoded_file,
                             user_id: user_id,
-                            service_token: service_token,
+                            service_slug: service_slug,
                             options: { allowed_types: ['plain/text'] })
       end
 

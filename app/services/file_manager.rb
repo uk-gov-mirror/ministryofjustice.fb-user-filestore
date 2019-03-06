@@ -4,10 +4,10 @@ require 'digest'
 class FileManager
   attr_reader :file
 
-  def initialize(encoded_file:, user_id:, service_token:, options: {})
+  def initialize(encoded_file:, user_id:, service_slug:, options: {})
     @encoded_file = encoded_file
     @user_id = user_id
-    @service_token = service_token
+    @service_slug = service_slug
     @max_size = options[:max_size] ? options[:max_size].to_i : nil
     @allowed_types = options.fetch(:allowed_types, [])
   end
@@ -61,6 +61,10 @@ class FileManager
     Storage::Disk::Uploader.new(path: path_to_file, key: key)
   end
 
+  def service_token
+    service_slug
+  end
+
   def digest
     @digest ||= Digest::SHA256.hexdigest(service_token + user_id + file_fingerprint)
   end
@@ -92,5 +96,5 @@ class FileManager
     Rails.root.join('tmp/files/quarantine/')
   end
 
-  attr_accessor :encoded_file, :user_id, :service_token, :max_size, :allowed_types
+  attr_accessor :encoded_file, :user_id, :service_slug, :max_size, :allowed_types
 end

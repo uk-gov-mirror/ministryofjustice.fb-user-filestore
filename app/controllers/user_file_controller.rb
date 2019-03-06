@@ -5,7 +5,7 @@ class UserFileController < ApplicationController
   def create
     @file_manager = FileManager.new(encoded_file: params[:file],
                                     user_id: params[:user_id],
-                                    service_token: params[:service_slug], # TODO: get token
+                                    service_slug: params[:service_slug], # TODO: get token
                                     options: {
                                       max_size: params[:policy][:max_size],
                                       allowed_types: params[:policy][:allowed_types]
