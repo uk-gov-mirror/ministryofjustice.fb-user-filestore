@@ -17,6 +17,7 @@ end
 
 group :development do
    gem 'guard-rspec', require: false
+   gem 'timecop'
 end
 
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
