@@ -24,7 +24,14 @@ class UserFileController < ApplicationController
     # async?
     @file_manager.upload
 
-    render json: { }, status: 200
+    hash = {
+      url: "/service/#{service_slug}/user/#{user_id}/#{@file_manager.file_fingerprint}",
+      size: @file_manager.file_size,
+      type: @file_manager.mime_type,
+      date: Time.now.to_i
+    }
+
+    render json: hash, status: 201
   rescue
     return error_server_error
   ensure
@@ -53,5 +60,15 @@ class UserFileController < ApplicationController
   def error_server_error
     render json: { code: 503,
                    name: 'unavailable.file-store-failed' }, status: 503
+  end
+
+  # TODO sanatize?
+  def user_id
+    params[:user_id]
+  end
+
+  # TODO sanatize?
+  def service_slug
+    params[:service_slug]
   end
 end

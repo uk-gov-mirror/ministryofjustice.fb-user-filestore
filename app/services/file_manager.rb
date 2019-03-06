@@ -32,7 +32,7 @@ class FileManager
   end
 
   def file_size
-    @file_size = File.size(path_to_file)
+    @file_size ||= File.size(path_to_file)
   end
 
   def type_permitted?
@@ -47,14 +47,14 @@ class FileManager
     uploader.upload
   end
 
+  def file_fingerprint
+    @file_fingerprint ||= Digest::SHA256.file(file).to_s
+  end
+
   private
 
   def uploader
     Storage::Disk::Uploader.new(path: path_to_file, key: key)
-  end
-
-  def file_fingerprint
-    @file_fingerprint ||= Digest::SHA256.file(file).to_s
   end
 
   def digest
