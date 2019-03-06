@@ -25,6 +25,8 @@ class UserFileController < ApplicationController
     @file_manager.upload
 
     render json: { }, status: 200
+  rescue
+    return error_server_error
   ensure
     # delete from quarantine
   end
@@ -46,5 +48,10 @@ class UserFileController < ApplicationController
     render json: { code: 400,
                    name: 'invalid type',
                    type: type }, status: 400
+  end
+
+  def error_server_error
+    render json: { code: 503,
+                   name: 'unavailable.file-store-failed' }, status: 503
   end
 end

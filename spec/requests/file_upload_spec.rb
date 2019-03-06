@@ -8,10 +8,7 @@ describe 'FileUpload API', type: :request do
   end
 
   describe 'a POST /service/{service_slug}/{user_id} request' do
-    before do
-      headers = { 'CONTENT_TYPE' => 'application/json' }
-      post '/service/service-slug/user/user-id', :params => json.to_json, :headers => headers
-    end
+    let(:headers) { { 'CONTENT_TYPE' => 'application/json' } }
 
     after do
       FileUtils.rm('tmp/files/quarantine/*', force: true)
@@ -21,6 +18,10 @@ describe 'FileUpload API', type: :request do
       let(:file) { file_fixture('hello_world.txt').read }
       let(:encoded_file) { Base64.encode64(file) }
       let(:json) { json_format(encoded_file) }
+
+      before do
+        post '/service/service-slug/user/user-id', params: json.to_json, headers: headers
+      end
 
       it 'has status 200' do
         expect(response).to have_http_status(200)
@@ -44,6 +45,10 @@ describe 'FileUpload API', type: :request do
       let(:encoded_file) { Base64.encode64(file) }
       let(:json) { json_format(encoded_file) }
 
+      before do
+        post '/service/service-slug/user/user-id', params: json.to_json, headers: headers
+      end
+
       context 'returns error if file size is too large' do
         it 'has status 400' do
           expect(response).to have_http_status(400)
@@ -62,6 +67,10 @@ describe 'FileUpload API', type: :request do
         let(:encoded_file) { Base64.encode64(file) }
         let(:json) { json_format(encoded_file) }
 
+        before do
+          post '/service/service-slug/user/user-id', params: json.to_json, headers: headers
+        end
+
         it 'has status 400' do
           expect(response).to have_http_status(400)
         end
@@ -77,6 +86,10 @@ describe 'FileUpload API', type: :request do
         let(:encoded_file) { Base64.encode64(file) }
         let(:json) { json_format(encoded_file) }
 
+        before do
+          post '/service/service-slug/user/user-id', params: json.to_json, headers: headers
+        end
+
         it 'has status 400' do
           expect(response).to have_http_status(400)
         end
@@ -85,6 +98,25 @@ describe 'FileUpload API', type: :request do
           result = JSON.parse(response.body)
           expect(result['name']).to eq('invalid type')
         end
+      end
+    end
+
+    describe 'file could not be saved to quarantine' do
+      let(:file) { file_fixture('hello_world.txt').read }
+      let(:encoded_file) { Base64.encode64(file) }
+      let(:json) { json_format(encoded_file) }
+
+      let(:file_manager) { double('file_manager') }
+
+      it 'returns relevant error' do
+        allow(FileManager).to receive(:new).and_return(file_manager)
+        allow(file_manager).to receive(:save_to_disk).and_raise(Errno::ENOSPC.new)
+
+        post '/service/service-slug/user/user-id', params: json.to_json, headers: headers
+
+        body = JSON.parse(response.body)
+        expect(body['code']).to eql(503)
+        expect(body['name']).to eql('unavailable.file-store-failed')
       end
     end
   end
