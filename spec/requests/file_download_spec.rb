@@ -5,9 +5,9 @@ describe 'file download', type: :request do
     allow_any_instance_of(ApplicationController).to receive(:verify_token!)
   end
 
-  describe 'GET /service/{service_slug}/{user_id}/{fingerprint} request' do
+  describe 'GET /service/{service_slug}/user/{user_id}/{fingerprint}' do
     let(:do_get!) do
-      get '/service/service-slug/user/user-id/fingerprint'
+      get '/service/service-slug/user/user-id/28d-fingerprint'
     end
 
     context 'when file does exist' do

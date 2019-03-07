@@ -10,6 +10,7 @@ class FileManager
     @service_slug = service_slug
     @max_size = options[:max_size] ? options[:max_size].to_i : nil
     @allowed_types = options.fetch(:allowed_types, [])
+    @days_to_live = options.fetch(:days_to_live, 28)
   end
 
   def save_to_disk
@@ -51,6 +52,10 @@ class FileManager
     @file_fingerprint ||= Digest::SHA256.file(file).to_s
   end
 
+  def fingerprint_with_prefix
+    "#{days_to_live}d-#{file_fingerprint}"
+  end
+
   def file_already_exists?
     uploader.exists?
   end
@@ -68,7 +73,8 @@ class FileManager
   def key
     KeyForFile.new(service_slug: service_slug,
                    user_id: user_id,
-                   file_fingerprint: file_fingerprint).call
+                   file_fingerprint: file_fingerprint,
+                   days_to_live: days_to_live).call
   end
 
   def ensure_quarantine_folder_exists
@@ -79,5 +85,6 @@ class FileManager
     Rails.root.join('tmp/files/quarantine/')
   end
 
-  attr_accessor :encoded_file, :user_id, :service_slug, :max_size, :allowed_types
+  attr_accessor :encoded_file, :user_id, :service_slug, :max_size,
+                :allowed_types, :days_to_live
 end

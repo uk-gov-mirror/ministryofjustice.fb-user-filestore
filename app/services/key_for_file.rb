@@ -1,17 +1,18 @@
 class KeyForFile
-  def initialize(service_slug:, user_id:, file_fingerprint:)
+  def initialize(service_slug:, user_id:, file_fingerprint:, days_to_live:)
     @service_slug = service_slug
     @user_id = user_id
     @file_fingerprint = file_fingerprint
+    @days_to_live = days_to_live
   end
 
   def call
-    @call ||= "28d/#{hash_encrypted_digest}"
+    @call ||= "#{days_to_live}d/#{hash_encrypted_digest}"
   end
 
   private
 
-  attr_accessor :service_slug, :user_id, :file_fingerprint
+  attr_accessor :service_slug, :user_id, :file_fingerprint, :days_to_live
 
   def digest
     @digest ||= Digest::SHA256.hexdigest(service_token + user_id + file_fingerprint)

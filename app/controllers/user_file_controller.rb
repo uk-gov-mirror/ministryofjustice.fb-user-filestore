@@ -5,7 +5,8 @@ class UserFileController < ApplicationController
                                     service_slug: params[:service_slug],
                                     options: {
                                       max_size: params[:policy][:max_size],
-                                      allowed_types: params[:policy][:allowed_types]
+                                      allowed_types: params[:policy][:allowed_types],
+                                      days_to_live: params[:policy][:expires]
                                     })
 
     @file_manager.save_to_disk
@@ -26,7 +27,7 @@ class UserFileController < ApplicationController
     @file_manager.upload
 
     hash = {
-      url: "/service/#{service_slug}/user/#{user_id}/#{@file_manager.file_fingerprint}",
+      url: "/service/#{service_slug}/user/#{user_id}/#{@file_manager.fingerprint_with_prefix}",
       size: @file_manager.file_size,
       type: @file_manager.mime_type,
       date: Time.now.to_i
@@ -56,10 +57,19 @@ class UserFileController < ApplicationController
     @downloader ||= Storage::Disk::Downloader.new(key: key)
   end
 
+  def fingerprint
+    params[:fingerprint_with_prefix].split('-').last
+  end
+
+  def days_to_live
+    params[:fingerprint_with_prefix].split('-').first.scan(/\d/).join.to_i
+  end
+
   def key
     @key ||= KeyForFile.new(user_id: params[:user_id],
                             service_slug: params[:service_slug],
-                            file_fingerprint: params[:fingerprint]).call
+                            file_fingerprint: fingerprint,
+                            days_to_live: days_to_live).call
   end
 
   def error_large_file(size)
