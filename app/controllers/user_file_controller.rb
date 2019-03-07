@@ -1,11 +1,8 @@
 class UserFileController < ApplicationController
-  SERVICE_TOKEN = 'some-service-token'.freeze
-  IV = '1234567890123451'.freeze
-
   def create
     @file_manager = FileManager.new(encoded_file: params[:file],
                                     user_id: params[:user_id],
-                                    service_slug: params[:service_slug], # TODO: get token
+                                    service_slug: params[:service_slug],
                                     options: {
                                       max_size: params[:policy][:max_size],
                                       allowed_types: params[:policy][:allowed_types]
@@ -39,7 +36,7 @@ class UserFileController < ApplicationController
   rescue
     return error_server_error
   ensure
-    # delete from quarantine
+    @file_manager.delete_file if @file_manager
   end
 
   def show

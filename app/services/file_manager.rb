@@ -55,6 +55,10 @@ class FileManager
     uploader.exists?
   end
 
+  def delete_file
+    FileUtils.rm_f(path_to_file)
+  end
+
   private
 
   def uploader

@@ -35,12 +35,6 @@ describe 'FileUpload API', type: :request do
         expect(response).to have_http_status(201)
       end
 
-      it 'saves the decoded data to a local file in quarantine' do
-        path_to_file = controller.instance_variable_get(:@file_manager).path_to_file
-        decoded_data = File.open(path_to_file).read
-        expect(file).to eq(decoded_data)
-      end
-
       it 'saves the decoded data to a local file' do
         path_to_file = "./tmp/files/#{controller.instance_variable_get(:@file_manager).send(:key)}"
         decoded_data = File.open(path_to_file).read
@@ -54,6 +48,11 @@ describe 'FileUpload API', type: :request do
         expect(body['size']).to eql(11)
         expect(body['type']).to eql('text/plain')
         expect(body['date']).to eql(1546300800)
+      end
+
+      it 'deletes quarantined file' do
+        path_to_file = controller.instance_variable_get(:@file_manager).path_to_file
+        expect(File.exist?(path_to_file)).to be_falsey
       end
 
       describe 'uploading the same file again' do
@@ -133,7 +132,7 @@ describe 'FileUpload API', type: :request do
       let(:encoded_file) { Base64.encode64(file) }
       let(:json) { json_format(encoded_file) }
 
-      let(:file_manager) { double('file_manager') }
+      let(:file_manager) { double('file_manager', delete_file: true) }
 
       it 'returns relevant error' do
         allow(FileManager).to receive(:new).and_return(file_manager)
