@@ -25,6 +25,11 @@ describe 'file download', type: :request do
         hash = JSON.parse(response.body)
         expect(hash['file']).to eql(Base64.encode64('Hello World'))
       end
+
+      it 'removes the temporary file' do
+        downloader = controller.send(:downloader)
+        expect(File.exist?(downloader.file.path)).to be_falsey
+      end
     end
 
     context 'when file does not exist' do

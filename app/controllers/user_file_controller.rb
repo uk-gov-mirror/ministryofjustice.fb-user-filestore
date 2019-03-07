@@ -41,12 +41,8 @@ class UserFileController < ApplicationController
 
   def show
     if downloader.exists?
-      downloader.download
-      file = downloader.file
-      data = file.read
-      encoded_file = Base64.encode64(data)
-
-      render json: { file: encoded_file }, status: 200
+      render json: { file: downloader.encoded_contents }, status: 200
+      downloader.purge_from_destination!
     else
       render json: { code: 404, name: 'not-found' }, status: 404
     end

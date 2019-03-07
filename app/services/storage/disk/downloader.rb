@@ -20,10 +20,16 @@ module Storage
       end
 
       def purge_from_destination!
+        FileUtils.rm(file.path)
       end
 
       def file
         @file ||= Tempfile.new(filename)
+      end
+
+      def encoded_contents
+        download
+        Base64.encode64(file.read)
       end
 
       private
