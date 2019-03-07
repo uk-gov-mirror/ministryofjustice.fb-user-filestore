@@ -34,7 +34,7 @@ class UserFileController < ApplicationController
 
     render json: hash, status: 201
   rescue
-    return error_server_error
+    return error_upload_server_error
   ensure
     @file_manager.delete_file if @file_manager
   end
@@ -46,6 +46,8 @@ class UserFileController < ApplicationController
     else
       render json: { code: 404, name: 'not-found' }, status: 404
     end
+  rescue StandardError
+    return error_download_server_error
   end
 
   private
@@ -73,9 +75,14 @@ class UserFileController < ApplicationController
                    type: type }, status: 400
   end
 
-  def error_server_error
+  def error_upload_server_error
     render json: { code: 503,
                    name: 'unavailable.file-store-failed' }, status: 503
+  end
+
+  def error_download_server_error
+    render json: { code: 503,
+                   name: 'unavailable.file-retrieval-failed' }, status: 503
   end
 
   # TODO sanatize?
