@@ -23,7 +23,7 @@ class KeyForFile
 
     cipher = OpenSSL::Cipher.new 'AES-256-CBC'
     cipher.encrypt
-    cipher.iv = '1234567890123456'
+    cipher.iv = key_encryption_iv
     cipher.key = '12345678901234567890123456789012' # encrypted_user_id_and_token
     encrypted = cipher.update(digest) + cipher.final
     @encrypted_digest = encrypted.unpack1('H*')
@@ -36,5 +36,9 @@ class KeyForFile
   def service_token
     # service_token_client.call(service_slug)
     service_slug
+  end
+
+  def key_encryption_iv
+    ENV['KEY_ENCRYPTION_IV']
   end
 end
