@@ -1,6 +1,12 @@
 require 'rails_helper'
 
-describe 'file download', type: :request do
+RSpec.describe 'file download', type: :request do
+  around :each do |example|
+    reset_test_directories!
+
+    example.run
+  end
+
   before :each do
     allow_any_instance_of(ApplicationController).to receive(:verify_token!)
   end

@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe 'user filestore API', type: :request do
+RSpec.describe 'user filestore API', type: :request do
   let(:service_slug) { 'my-service' }
   let(:user_identifier) { SecureRandom::uuid }
   let(:headers) do

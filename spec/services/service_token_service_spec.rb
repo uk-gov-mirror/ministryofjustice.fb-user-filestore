@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe ServiceTokenService do
+RSpec.describe ServiceTokenService do
   describe '::get' do
     let(:fake_client) { double('fake_client') }
 

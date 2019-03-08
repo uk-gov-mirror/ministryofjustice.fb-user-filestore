@@ -1,8 +1,13 @@
 require 'rails_helper'
 require 'base64'
-require 'pry'
 
-describe 'FileUpload API', type: :request do
+RSpec.describe 'FileUpload API', type: :request do
+  around :each do |example|
+    reset_test_directories!
+
+    example.run
+  end
+
   before :each do
     allow_any_instance_of(ApplicationController).to receive(:verify_token!)
   end
@@ -10,14 +15,10 @@ describe 'FileUpload API', type: :request do
   describe 'a POST /service/{service_slug}/{user_id} request' do
     let(:headers) { { 'CONTENT_TYPE' => 'application/json' } }
 
-    after do
-      FileUtils.rm('tmp/files/quarantine/*', force: true)
-    end
-
     describe 'upload with JSON payload' do
       let(:file) { file_fixture('hello_world.txt').read }
       let(:encoded_file) { Base64.encode64(file) }
-      let(:json) { json_format(encoded_file) }
+      let(:json) { json_request(encoded_file) }
 
       around :each do |example|
         Timecop.freeze(Time.utc(2019, 1, 1)) do
@@ -26,8 +27,6 @@ describe 'FileUpload API', type: :request do
       end
 
       before do
-        Storage::Disk::Uploader.purge_destination!
-
         post '/service/service-slug/user/user-id', params: json.to_json, headers: headers
       end
 
@@ -69,7 +68,7 @@ describe 'FileUpload API', type: :request do
     describe 'file exceeds max file size' do
       let(:file) { file_fixture('sample.txt').read }
       let(:encoded_file) { Base64.encode64(file) }
-      let(:json) { json_format(encoded_file) }
+      let(:json) { json_request(encoded_file) }
 
       before do
         post '/service/service-slug/user/user-id', params: json.to_json, headers: headers
@@ -91,7 +90,7 @@ describe 'FileUpload API', type: :request do
       describe 'bmp format' do
         let(:file) { file_fixture('bitmap.bmp').read }
         let(:encoded_file) { Base64.encode64(file) }
-        let(:json) { json_format(encoded_file) }
+        let(:json) { json_request(encoded_file) }
 
         before do
           post '/service/service-slug/user/user-id', params: json.to_json, headers: headers
@@ -110,7 +109,7 @@ describe 'FileUpload API', type: :request do
       describe 'html format' do
         let(:file) { file_fixture('hello.html').read }
         let(:encoded_file) { Base64.encode64(file) }
-        let(:json) { json_format(encoded_file) }
+        let(:json) { json_request(encoded_file) }
 
         before do
           post '/service/service-slug/user/user-id', params: json.to_json, headers: headers
@@ -130,7 +129,7 @@ describe 'FileUpload API', type: :request do
     describe 'file could not be saved to quarantine' do
       let(:file) { file_fixture('hello_world.txt').read }
       let(:encoded_file) { Base64.encode64(file) }
-      let(:json) { json_format(encoded_file) }
+      let(:json) { json_request(encoded_file) }
 
       let(:file_manager) { double('file_manager', delete_file: true) }
 
@@ -145,9 +144,53 @@ describe 'FileUpload API', type: :request do
         expect(body['name']).to eql('unavailable.file-store-failed')
       end
     end
+
+    describe 'with custom expires option set' do
+      let(:file) { file_fixture('hello_world.txt').read }
+      let(:encoded_file) { Base64.encode64(file) }
+      let(:json) { json_request(encoded_file, expires: 7) }
+
+      around :each do |example|
+        Timecop.freeze(Time.utc(2019, 1, 1)) do
+          example.run
+        end
+      end
+
+      before do
+        Storage::Disk::Uploader.purge_destination!
+
+        post '/service/service-slug/user/user-id', params: json.to_json, headers: headers
+      end
+
+      it 'has status 201' do
+        expect(response).to have_http_status(201)
+      end
+
+      it 'saves the decoded data to a local file' do
+        path_to_file = './tmp/files/7d/4d91e82727bdca3f0496f84e90d6ee94d81767b661683e1396aefffe4d55a2cd'
+        decoded_data = File.open(path_to_file).read
+        expect(file).to eq(decoded_data)
+      end
+
+      it 'returns correct json response' do
+        body = JSON.parse(response.body)
+
+        expect(body['url']).to eql('/service/service-slug/user/user-id/7d-a591a6d40bf420404a011733cfb7b190d62c65bf0bcda32b57b277d9ad9f146e')
+        expect(body['size']).to eql(11)
+        expect(body['type']).to eql('text/plain')
+        expect(body['date']).to eql(1546300800)
+      end
+
+      it 'deletes quarantined file' do
+        path_to_file = './tmp/files/quarantine/7d/4d91e82727bdca3f0496f84e90d6ee94d81767b661683e1396aefffe4d55a2cd'
+        expect(File.exist?(path_to_file)).to be_falsey
+      end
+    end
   end
 
-  def json_format(encoded_file)
+  def json_request(encoded_file, options = {})
+    expires = options[:expires] || 28
+
     {
         "iat": '{timestamp}',
         "encrypted_user_id_and_token": 'abcdefghijklmnopqrstuvwxyz012345',
@@ -164,7 +207,7 @@ describe 'FileUpload API', type: :request do
             application/vnd.ms-excel
           ],
           "max_size": '10240',
-          "expires": '28'
+          "expires": expires
         }
     }
   end
