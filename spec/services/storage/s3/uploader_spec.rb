@@ -54,4 +54,22 @@ RSpec.describe Storage::S3::Uploader do
       subject.purge_from_s3!
     end
   end
+
+  describe '#created_at' do
+    let(:now) { Time.now.utc }
+
+    let(:stub_responses) do
+      {
+        head_object: [
+          { content_length: 150, last_modified: now },
+        ],
+        put_object: [{}],
+      }
+    end
+
+    it 'returns creation timestamp' do
+      subject.upload
+      expect(subject.created_at).to be_within(10.seconds).of(now)
+    end
+  end
 end

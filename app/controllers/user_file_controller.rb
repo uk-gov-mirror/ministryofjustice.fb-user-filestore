@@ -30,7 +30,7 @@ class UserFileController < ApplicationController
       url: "/service/#{service_slug}/user/#{user_id}/#{@file_manager.fingerprint_with_prefix}",
       size: @file_manager.file_size,
       type: @file_manager.mime_type,
-      date: Time.now.to_i
+      date: @file_manager.expires_at.to_i
     }
 
     render json: hash, status: 201

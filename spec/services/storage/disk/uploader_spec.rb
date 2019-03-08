@@ -2,10 +2,15 @@ require 'rails_helper'
 
 RSpec.describe Storage::Disk::Uploader do
   let(:path) { file_fixture('lorem_ipsum.txt') }
-  let(:key) { '28d/service-slug/upload-fingerprint' }
+  let(:key) { '28d/upload-fingerprint' }
 
   subject do
     described_class.new(path: path, key: key)
+  end
+
+  around :each do |example|
+    reset_test_directories!
+    example.run
   end
 
   describe '#upload' do
@@ -16,9 +21,12 @@ RSpec.describe Storage::Disk::Uploader do
         expect(subject.exists?).to be_truthy
       end
     end
+  end
 
-    before :each do
-      FileUtils.rm_r(Dir.glob('tmp/files/*'))
+  describe '#created_at' do
+    it 'returns creation timestamp' do
+      subject.upload
+      expect(subject.created_at).to be_within(10.seconds).of(Time.now)
     end
   end
 end

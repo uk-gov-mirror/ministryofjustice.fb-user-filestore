@@ -19,9 +19,10 @@ RSpec.describe 'FileUpload API', type: :request do
       let(:file) { file_fixture('hello_world.txt').read }
       let(:encoded_file) { Base64.encode64(file) }
       let(:json) { json_request(encoded_file) }
+      let(:now) { Time.now.utc }
 
       around :each do |example|
-        Timecop.freeze(Time.utc(2019, 1, 1)) do
+        Timecop.freeze(now) do
           example.run
         end
       end
@@ -46,7 +47,7 @@ RSpec.describe 'FileUpload API', type: :request do
         expect(body['url']).to eql('/service/service-slug/user/user-id/28d-a591a6d40bf420404a011733cfb7b190d62c65bf0bcda32b57b277d9ad9f146e')
         expect(body['size']).to eql(11)
         expect(body['type']).to eql('text/plain')
-        expect(body['date']).to eql(1546300800)
+        expect(body['date']).to be_within(1.hour).of((now + 28.days).to_i)
       end
 
       it 'deletes quarantined file' do
@@ -149,16 +150,15 @@ RSpec.describe 'FileUpload API', type: :request do
       let(:file) { file_fixture('hello_world.txt').read }
       let(:encoded_file) { Base64.encode64(file) }
       let(:json) { json_request(encoded_file, expires: 7) }
+      let(:now) { Time.now.utc }
 
       around :each do |example|
-        Timecop.freeze(Time.utc(2019, 1, 1)) do
+        Timecop.freeze(now) do
           example.run
         end
       end
 
       before do
-        Storage::Disk::Uploader.purge_destination!
-
         post '/service/service-slug/user/user-id', params: json.to_json, headers: headers
       end
 
@@ -178,7 +178,7 @@ RSpec.describe 'FileUpload API', type: :request do
         expect(body['url']).to eql('/service/service-slug/user/user-id/7d-a591a6d40bf420404a011733cfb7b190d62c65bf0bcda32b57b277d9ad9f146e')
         expect(body['size']).to eql(11)
         expect(body['type']).to eql('text/plain')
-        expect(body['date']).to eql(1546300800)
+        expect(body['date']).to be_within(1.hour).of((now + 7.days).to_i)
       end
 
       it 'deletes quarantined file' do

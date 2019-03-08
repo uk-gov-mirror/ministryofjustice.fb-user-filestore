@@ -23,6 +23,10 @@ module Storage
         FileUtils.rm_r(Rails.root.join('tmp/files/'))
       end
 
+      def created_at
+        File.ctime(destination_path)
+      end
+
       private
 
       attr_accessor :path, :key

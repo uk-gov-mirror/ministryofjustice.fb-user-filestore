@@ -21,6 +21,10 @@ module Storage
         object.delete
       end
 
+      def created_at
+        object.last_modified
+      end
+
       private
 
       attr_accessor :path, :key

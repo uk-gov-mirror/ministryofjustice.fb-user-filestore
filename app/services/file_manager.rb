@@ -64,6 +64,10 @@ class FileManager
     FileUtils.rm_f(path_to_file)
   end
 
+  def expires_at
+    uploader.created_at + days_to_live.days
+  end
+
   private
 
   def uploader

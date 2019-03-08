@@ -5,7 +5,12 @@ RSpec.describe Storage::Disk::Downloader do
   subject { described_class.new(key: key) }
 
   let(:path) { file_fixture('lorem_ipsum.txt') }
-  let(:key) { '28d/service-slug/download-fingerprint' }
+  let(:key) { '28d/download-fingerprint' }
+
+  around :each do |example|
+    reset_test_directories!
+    example.run
+  end
 
   describe '#download' do
     before :each do
@@ -23,18 +28,9 @@ RSpec.describe Storage::Disk::Downloader do
         expect(contents).to eql("lorem ipsum\n")
       end
     end
-
-    after :each do
-      subject.purge_from_source!
-      subject.purge_from_destination!
-    end
   end
 
   describe '#exists?' do
-    before :each do
-      FileUtils.rm_f(Rails.root.join('tmp/files/', key))
-    end
-
     context 'when the file doesnt exist' do
       it 'returns false' do
         expect(subject.exists?).to be_falsey
@@ -44,10 +40,6 @@ RSpec.describe Storage::Disk::Downloader do
     context 'when the file exists' do
       before :each do
         FileUtils.touch(Rails.root.join('tmp/files/', key))
-      end
-
-      after :each do
-        FileUtils.rm_f(Rails.root.join('tmp/files/', key))
       end
 
       it 'returns truthy' do
