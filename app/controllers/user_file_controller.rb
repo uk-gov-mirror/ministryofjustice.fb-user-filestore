@@ -1,4 +1,6 @@
 class UserFileController < ApplicationController
+  before_action :log_warnings, only: [:create]
+
   def create
     @file_manager = FileManager.new(encoded_file: params[:file],
                                     user_id: params[:user_id],
@@ -52,6 +54,14 @@ class UserFileController < ApplicationController
   end
 
   private
+
+  def log_warnings
+    Rails.logger.warn('policy.allowed_types was not supplied') if empty_allowed_types?
+  end
+
+  def empty_allowed_types?
+    params[:policy][:allowed_types].empty?
+  end
 
   def downloader
     @downloader ||= Storage::Disk::Downloader.new(key: key)
