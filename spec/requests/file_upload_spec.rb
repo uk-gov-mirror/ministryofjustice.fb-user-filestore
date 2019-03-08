@@ -10,6 +10,8 @@ RSpec.describe 'FileUpload API', type: :request do
 
   before :each do
     allow_any_instance_of(ApplicationController).to receive(:verify_token!)
+    allow(ServiceTokenService).to receive(:get).with('service-slug')
+                                               .and_return('service-token')
   end
 
   describe 'a POST /service/{service_slug}/{user_id} request' do
@@ -167,7 +169,7 @@ RSpec.describe 'FileUpload API', type: :request do
       end
 
       it 'saves the decoded data to a local file' do
-        path_to_file = './tmp/files/7d/4d91e82727bdca3f0496f84e90d6ee94d81767b661683e1396aefffe4d55a2cd'
+        path_to_file = './tmp/files/7d/4a7fd995c8b3f4fd87169225ca8146caf08bc908ccb643e9152519ca727ed02a'
         decoded_data = File.open(path_to_file).read
         expect(file).to eq(decoded_data)
       end

@@ -14,6 +14,11 @@ RSpec.describe FileManager do
   end
 
   describe '#key' do
+    before :each do
+      allow(ServiceTokenService).to receive(:get).with('service-slug')
+                                                 .and_return('service-token')
+    end
+
     it 'expect file to be saved to disk' do
       subject.save_to_disk
 

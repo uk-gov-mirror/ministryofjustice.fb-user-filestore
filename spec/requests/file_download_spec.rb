@@ -9,6 +9,8 @@ RSpec.describe 'file download', type: :request do
 
   before :each do
     allow_any_instance_of(ApplicationController).to receive(:verify_token!)
+    allow(ServiceTokenService).to receive(:get).with('service-slug')
+                                               .and_return('service-token')
   end
 
   describe 'GET /service/{service_slug}/user/{user_id}/{fingerprint}' do
@@ -18,9 +20,9 @@ RSpec.describe 'file download', type: :request do
 
     context 'when file does exist' do
       around :each do |example|
-        FileUtils.cp(file_fixture('hello_world.txt'), Rails.root.join('tmp/files/28d/3bba5a1694c27d3d3749a2ed96b0dd289bc56c37d145a8fee476f695c98db260'))
+        FileUtils.cp(file_fixture('hello_world.txt'), Rails.root.join('tmp/files/28d/d097b6db68269fee750a2cb449cd5e814e17b6d059f235181a0069630bffa8a7'))
         example.run
-        FileUtils.rm(Rails.root.join('tmp/files/28d/3bba5a1694c27d3d3749a2ed96b0dd289bc56c37d145a8fee476f695c98db260'))
+        FileUtils.rm(Rails.root.join('tmp/files/28d/d097b6db68269fee750a2cb449cd5e814e17b6d059f235181a0069630bffa8a7'))
       end
 
       it 'returns status 200' do
