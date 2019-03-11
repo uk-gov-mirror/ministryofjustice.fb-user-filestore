@@ -5,22 +5,25 @@ class Cryptography
 
   def initialize(file:)
     @file = file
-    @cipher = OpenSSL::Cipher.new 'AES-256-CBC'
   end
 
   def encrypt
-    @cipher.encrypt
-    @cipher.iv = IV
-    @cipher.key = KEY
-    encrypted_data = @cipher.update(@file) + @cipher.final
+    cipher.encrypt
+    cipher.iv = IV
+    cipher.key = KEY
+    encrypted_data = cipher.update(@file) + cipher.final
     encrypted_data.unpack1('H*')
   end
 
   def decrypt
-    @cipher.decrypt
-    @cipher.iv = IV
-    @cipher.key = KEY
+    cipher.decrypt
+    cipher.iv = IV
+    cipher.key = KEY
     data = [@file].pack('H*').unpack('C*').pack('c*')
-    @cipher.update(data) + @cipher.final
+    cipher.update(data) + cipher.final
+  end
+
+  def cipher
+    @cipher ||= OpenSSL::Cipher.new 'AES-256-CBC'
   end
 end

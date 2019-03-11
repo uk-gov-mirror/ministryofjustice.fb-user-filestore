@@ -12,7 +12,7 @@ module Storage
       def upload
         encrypt
         FileUtils.mkdir_p(destination_folder)
-        FileUtils.cp(@path_to_encrypted_file, destination_path)
+        FileUtils.cp(path_to_encrypted_file, destination_path)
       end
 
       def exists?
@@ -54,9 +54,9 @@ module Storage
 
       def save_encrypted_to_disk(data)
         ensure_encrypted_folder_exists
-        @encrypted_file = File.open(path_to_encrypted_file, 'wb')
-        @encrypted_file.write(data)
-        @encrypted_file.close
+        encrypted_file = File.open(path_to_encrypted_file, 'wb')
+        encrypted_file.write(data)
+        encrypted_file.close
       end
 
       def path_to_encrypted_file

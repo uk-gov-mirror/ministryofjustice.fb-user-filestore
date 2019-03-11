@@ -12,20 +12,15 @@ RSpec.describe Storage::Disk::Downloader do
     example.run
   end
 
-  describe '#download' do
+  describe '#encoded_contents' do
     before :each do
       uploader.upload
     end
 
     describe do
       it 'downloads file from s3' do
-        subject.download
-
-        downloaded_path = subject.send(:file).path
-
-        contents = File.open(downloaded_path).read
-
-        expect(contents).to eql("lorem ipsum\n")
+        encoded_data = Base64.encode64("lorem ipsum\n")
+        expect(subject.encoded_contents).to eql(encoded_data)
       end
     end
   end

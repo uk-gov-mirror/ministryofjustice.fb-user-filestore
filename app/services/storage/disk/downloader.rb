@@ -8,11 +8,6 @@ module Storage
         @key = key
       end
 
-      def download
-        FileUtils.cp(path, file.path)
-        decrypt(file.path)
-      end
-
       def exists?
         File.exist?(path)
       end
@@ -52,6 +47,11 @@ module Storage
         file = File.open(file, 'wb')
         file.write(result)
         file.close
+      end
+
+      def download
+        FileUtils.cp(path, file.path)
+        decrypt(file.path)
       end
     end
   end
