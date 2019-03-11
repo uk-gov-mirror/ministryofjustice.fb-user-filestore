@@ -2,7 +2,7 @@ require 'securerandom'
 require 'digest'
 
 class FileManager
-  attr_reader :file, :encrypted_file
+  attr_reader :file
 
   def initialize(encoded_file:, user_id:, service_slug:,
                  encrypted_user_id_and_token:, options: {})

@@ -53,6 +53,11 @@ module Storage
         file.write(result)
         file.close
       end
+
+      def download
+        FileUtils.cp(path, file.path)
+        decrypt(file.path)
+      end
     end
   end
 end
