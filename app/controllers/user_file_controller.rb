@@ -44,6 +44,8 @@ class UserFileController < ApplicationController
   end
 
   def show
+    params.merge!(JSON.parse(Base64.strict_decode64(params[:payload])).select{|k,_| %w{ encrypted_user_id_and_token iat }.include?(k)})
+
     if downloader.exists?
       render json: { file: downloader.encoded_contents }, status: 200
       downloader.purge_from_destination!

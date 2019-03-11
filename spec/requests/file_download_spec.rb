@@ -7,15 +7,31 @@ RSpec.describe 'file download', type: :request do
     example.run
   end
 
+  let(:payload) do
+    {
+      encrypted_user_id_and_token: '12345678901234567890123456789012',
+      iat: Time.now.to_i
+    }
+  end
+
+  let(:headers) do
+    { "X-Access-Token" => JWT.encode(payload, 'service-token', 'HS256') }
+  end
+
+  # Buffer.from(JSON.stringify(payload)).toString('Base64')
+  let(:payload_query_string) do
+    json = payload.to_json
+    base64 = Base64.strict_encode64(json)
+  end
+
   before :each do
-    allow_any_instance_of(ApplicationController).to receive(:verify_token!)
     allow(ServiceTokenService).to receive(:get).with('service-slug')
                                                .and_return('service-token')
   end
 
   describe 'GET /service/{service_slug}/user/{user_id}/{fingerprint}' do
     let(:do_get!) do
-      get '/service/service-slug/user/user-id/28d-fingerprint', params: { encrypted_user_id_and_token: '12345678901234567890123456789012' }
+      get "/service/service-slug/user/user-id/28d-fingerprint?payload=#{payload_query_string}", headers: headers
     end
 
     context 'when file does exist' do
