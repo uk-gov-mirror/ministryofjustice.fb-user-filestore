@@ -1,9 +1,10 @@
 class KeyForFile
-  def initialize(service_slug:, user_id:, file_fingerprint:, days_to_live:)
+  def initialize(service_slug:, user_id:, file_fingerprint:, days_to_live:, cipher_key:)
     @service_slug = service_slug
     @user_id = user_id
     @file_fingerprint = file_fingerprint
     @days_to_live = days_to_live
+    @cipher_key = cipher_key
   end
 
   def call
@@ -12,7 +13,8 @@ class KeyForFile
 
   private
 
-  attr_accessor :service_slug, :user_id, :file_fingerprint, :days_to_live
+  attr_accessor :service_slug, :user_id, :file_fingerprint, :days_to_live,
+                :cipher_key
 
   def digest
     @digest ||= Digest::SHA256.hexdigest(service_token + user_id + file_fingerprint)
@@ -24,7 +26,7 @@ class KeyForFile
     cipher = OpenSSL::Cipher.new 'AES-256-CBC'
     cipher.encrypt
     cipher.iv = key_encryption_iv
-    cipher.key = '12345678901234567890123456789012' # encrypted_user_id_and_token
+    cipher.key = cipher_key
     encrypted = cipher.update(digest) + cipher.final
     @encrypted_digest = encrypted.unpack1('H*')
   end

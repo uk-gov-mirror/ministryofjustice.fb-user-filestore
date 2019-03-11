@@ -5,6 +5,7 @@ class UserFileController < ApplicationController
     @file_manager = FileManager.new(encoded_file: params[:file],
                                     user_id: params[:user_id],
                                     service_slug: params[:service_slug],
+                                    encrypted_user_id_and_token: params[:encrypted_user_id_and_token],
                                     options: {
                                       max_size: params[:policy][:max_size],
                                       allowed_types: params[:policy][:allowed_types],
@@ -79,7 +80,8 @@ class UserFileController < ApplicationController
     @key ||= KeyForFile.new(user_id: params[:user_id],
                             service_slug: params[:service_slug],
                             file_fingerprint: fingerprint,
-                            days_to_live: days_to_live).call
+                            days_to_live: days_to_live,
+                            cipher_key: params[:encrypted_user_id_and_token]).call
   end
 
   def error_large_file(size)

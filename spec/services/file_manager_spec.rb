@@ -6,11 +6,13 @@ RSpec.describe FileManager do
   let(:user_id) { SecureRandom.uuid }
   let(:service_token) { SecureRandom.hex }
   let(:service_slug) { 'service-slug' }
+  let(:encrypted_user_id_and_token) { SecureRandom.hex(16) }
 
   subject do
     described_class.new(encoded_file: encoded_file,
                         user_id: user_id,
-                        service_slug: service_slug)
+                        service_slug: service_slug,
+                        encrypted_user_id_and_token: encrypted_user_id_and_token)
   end
 
   describe '#key' do
@@ -50,6 +52,7 @@ RSpec.describe FileManager do
         described_class.new(encoded_file: encoded_file,
                             user_id: user_id,
                             service_slug: service_slug,
+                            encrypted_user_id_and_token: encrypted_user_id_and_token,
                             options: { max_size: '1300' })
       end
 
@@ -63,6 +66,7 @@ RSpec.describe FileManager do
         described_class.new(encoded_file: encoded_file,
                             user_id: user_id,
                             service_slug: service_slug,
+                            encrypted_user_id_and_token: encrypted_user_id_and_token,
                             options: { max_size: '1400' })
       end
 
@@ -84,6 +88,7 @@ RSpec.describe FileManager do
         described_class.new(encoded_file: encoded_file,
                             user_id: user_id,
                             service_slug: service_slug,
+                            encrypted_user_id_and_token: encrypted_user_id_and_token,
                             options: { allowed_types: ['image/png'] })
       end
 
@@ -97,6 +102,7 @@ RSpec.describe FileManager do
         described_class.new(encoded_file: encoded_file,
                             user_id: user_id,
                             service_slug: service_slug,
+                            encrypted_user_id_and_token: encrypted_user_id_and_token,
                             options: { allowed_types: ['plain/text'] })
       end
 

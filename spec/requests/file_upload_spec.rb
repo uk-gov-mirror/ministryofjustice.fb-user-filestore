@@ -14,7 +14,7 @@ RSpec.describe 'FileUpload API', type: :request do
                                                .and_return('service-token')
   end
 
-  describe 'a POST /service/{service_slug}/{user_id} request' do
+  describe 'a POST /service/{service_slug}/user/{user_id} request' do
     let(:headers) { { 'CONTENT_TYPE' => 'application/json' } }
 
     describe 'upload with JSON payload' do

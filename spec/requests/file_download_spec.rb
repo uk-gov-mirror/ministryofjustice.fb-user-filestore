@@ -15,7 +15,7 @@ RSpec.describe 'file download', type: :request do
 
   describe 'GET /service/{service_slug}/user/{user_id}/{fingerprint}' do
     let(:do_get!) do
-      get '/service/service-slug/user/user-id/28d-fingerprint'
+      get '/service/service-slug/user/user-id/28d-fingerprint', params: { encrypted_user_id_and_token: '12345678901234567890123456789012' }
     end
 
     context 'when file does exist' do

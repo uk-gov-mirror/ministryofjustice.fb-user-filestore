@@ -4,10 +4,12 @@ require 'digest'
 class FileManager
   attr_reader :file
 
-  def initialize(encoded_file:, user_id:, service_slug:, options: {})
+  def initialize(encoded_file:, user_id:, service_slug:,
+                 encrypted_user_id_and_token:, options: {})
     @encoded_file = encoded_file
     @user_id = user_id
     @service_slug = service_slug
+    @encrypted_user_id_and_token = encrypted_user_id_and_token
     @max_size = options[:max_size] ? options[:max_size].to_i : nil
     @allowed_types = options.fetch(:allowed_types, [])
     @days_to_live = options.fetch(:days_to_live, 28)
@@ -70,6 +72,9 @@ class FileManager
 
   private
 
+  attr_accessor :encoded_file, :user_id, :service_slug, :max_size,
+                :allowed_types, :days_to_live, :encrypted_user_id_and_token
+
   def uploader
     Storage::Disk::Uploader.new(path: path_to_file, key: key)
   end
@@ -78,7 +83,8 @@ class FileManager
     KeyForFile.new(service_slug: service_slug,
                    user_id: user_id,
                    file_fingerprint: file_fingerprint,
-                   days_to_live: days_to_live).call
+                   days_to_live: days_to_live,
+                   cipher_key: encrypted_user_id_and_token).call
   end
 
   def ensure_quarantine_folder_exists
@@ -88,7 +94,4 @@ class FileManager
   def quarantine_folder
     Rails.root.join('tmp/files/quarantine/')
   end
-
-  attr_accessor :encoded_file, :user_id, :service_slug, :max_size,
-                :allowed_types, :days_to_live
 end
