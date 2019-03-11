@@ -23,7 +23,6 @@ RSpec.describe FileManager do
 
     it 'expect file to be saved to disk' do
       subject.save_to_disk
-      subject.encrypt
       subject.upload
 
       encrypted_data = Cryptography.new(file: File.open(file).read).encrypt
@@ -110,17 +109,6 @@ RSpec.describe FileManager do
       it 'returns false' do
         expect(subject.type_permitted?).to be_falsey
       end
-    end
-  end
-
-  describe '#save_encrypted_to_disk' do
-    let(:encrypted_data) { '0b9a059c8ccd0e6a948474a68d8beb74' }
-    let(:filename) { subject.send(:random_filename) }
-
-    it 'expect file to be saved to disk' do
-      expect(File.exist?("tmp/files/encrypted_data/#{filename}")).to be_falsey
-      subject.save_encrypted_to_disk(encrypted_data)
-      expect(File.exist?("tmp/files/encrypted_data/#{filename}")).to be_truthy
     end
   end
 

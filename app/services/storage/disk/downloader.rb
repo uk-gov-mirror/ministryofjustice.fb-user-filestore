@@ -10,6 +10,7 @@ module Storage
 
       def download
         FileUtils.cp(path, file.path)
+        decrypt(file.path)
       end
 
       def exists?
@@ -42,6 +43,15 @@ module Storage
 
       def filename
         @filename ||= SecureRandom.hex
+      end
+
+      def decrypt(file)
+        file = File.open(file)
+        data = file.read
+        result = Cryptography.new(file: data).decrypt
+        file = File.open(file, 'wb')
+        file.write(result)
+        file.close
       end
     end
   end
