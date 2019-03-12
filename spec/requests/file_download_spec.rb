@@ -36,9 +36,9 @@ RSpec.describe 'file download', type: :request do
 
     context 'when file does exist' do
       around :each do |example|
-        FileUtils.cp(file_fixture('hello_world.txt'), Rails.root.join('tmp/files/28d/d097b6db68269fee750a2cb449cd5e814e17b6d059f235181a0069630bffa8a7'))
+        FileUtils.cp(file_fixture('hello_world.txt'), Rails.root.join('tmp/files/28d/6ac6a2fe8dc936178d165c6ddffa39737b7fbb5dfdf17bbf81d2ac7418820a46'))
         example.run
-        FileUtils.rm(Rails.root.join('tmp/files/28d/d097b6db68269fee750a2cb449cd5e814e17b6d059f235181a0069630bffa8a7'))
+        FileUtils.rm(Rails.root.join('tmp/files/28d/6ac6a2fe8dc936178d165c6ddffa39737b7fbb5dfdf17bbf81d2ac7418820a46'))
       end
 
       it 'returns status 200' do

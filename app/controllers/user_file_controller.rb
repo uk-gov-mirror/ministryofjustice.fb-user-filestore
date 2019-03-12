@@ -83,7 +83,7 @@ class UserFileController < ApplicationController
                             service_slug: params[:service_slug],
                             file_fingerprint: fingerprint,
                             days_to_live: days_to_live,
-                            cipher_key: params[:encrypted_user_id_and_token]).call
+                            cipher_key: Digest::MD5.hexdigest(params[:encrypted_user_id_and_token])).call
   end
 
   def error_large_file(size)

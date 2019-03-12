@@ -169,7 +169,7 @@ RSpec.describe 'FileUpload API', type: :request do
       end
 
       it 'saves the decoded data to a local file' do
-        path_to_file = './tmp/files/7d/4a7fd995c8b3f4fd87169225ca8146caf08bc908ccb643e9152519ca727ed02a'
+        path_to_file = './tmp/files/7d/dacddf0604d026f14331715e6841f00af56d85b8070e7b60e4311393408ac4d3'
         decoded_data = File.open(path_to_file).read
         expect(file).to eq(decoded_data)
       end

@@ -84,7 +84,7 @@ class FileManager
                    user_id: user_id,
                    file_fingerprint: file_fingerprint,
                    days_to_live: days_to_live,
-                   cipher_key: encrypted_user_id_and_token).call
+                   cipher_key: Digest::MD5.hexdigest(encrypted_user_id_and_token)).call
   end
 
   def ensure_quarantine_folder_exists
