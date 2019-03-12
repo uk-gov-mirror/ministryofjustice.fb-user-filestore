@@ -30,26 +30,6 @@ RSpec.describe Storage::S3::Uploader do
       end
     end
 
-    describe do
-      let(:stub_responses) do
-        {
-          head_object: [
-            { content_length: 150, metadata: { 'filename_with_extension' => 'lorem_ipsum.txt' } },
-            { content_length: 150, metadata: { 'filename_with_extension' => 'lorem_ipsum.txt' } }
-          ],
-          put_object: [{}],
-        }
-      end
-
-      it 'adds meta data with filename with extension' do
-        subject.upload
-
-        downloader = Storage::S3::Downloader.new(key: key)
-        object = downloader.send(:object)
-        expect(object.metadata).to eql({'filename_with_extension' => 'lorem_ipsum.txt'})
-      end
-    end
-
     after :each do
       subject.purge_from_s3!
     end

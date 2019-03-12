@@ -26,7 +26,7 @@ RSpec.describe Storage::S3::Downloader do
     describe do
       let(:download_responses) do
         {
-          head_object: [{ content_length: 150, metadata: { 'filename_with_extension' => 'lorem_ipsum.txt' }}],
+          head_object: [{ content_length: 150 }],
           get_object: [{ body: "lorem ipsum\n" }]
         }
       end
@@ -35,31 +35,9 @@ RSpec.describe Storage::S3::Downloader do
         subject.download
 
         downloaded_path = subject.send(:temp_file).path
-
-        expect(downloaded_path).to include('lorem_ipsum.txt')
-
         contents = File.open(downloaded_path).read
 
         expect(contents).to eql("lorem ipsum\n")
-      end
-    end
-
-    context 'when missing metadata' do
-      let(:stub_responses) do
-        {
-          put_object: [{}],
-          get_object: [{ body: "lorem ipsum\n" }],
-        }
-      end
-
-      it 'uses random hex string for filename' do
-        allow(subject.send(:object)).to receive(:metadata).and_return({})
-
-        subject.download
-
-        downloaded_path = subject.send(:temp_file).path
-
-        expect(downloaded_path).to match(/[a-f0-9]{32}/)
       end
     end
 

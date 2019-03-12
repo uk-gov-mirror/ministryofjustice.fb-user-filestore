@@ -1,6 +1,5 @@
 require 'aws-sdk-s3'
 require 'tempfile'
-require 'securerandom'
 
 module Storage
   module S3
@@ -34,11 +33,7 @@ module Storage
       end
 
       def temp_file
-        @temp_file ||= Tempfile.new(filename_with_extension)
-      end
-
-      def filename_with_extension
-        @filename_with_extension ||= object.metadata.fetch('filename_with_extension', SecureRandom.hex)
+        @temp_file ||= Tempfile.new
       end
 
       def bucket_name
