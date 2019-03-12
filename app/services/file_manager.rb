@@ -18,7 +18,7 @@ class FileManager
   def save_to_disk
     ensure_quarantine_folder_exists
     @file = File.open(path_to_file, 'wb')
-    @file.write(Base64.decode64(encoded_file))
+    @file.write(Base64.strict_decode64(encoded_file))
     @file.close
   end
 

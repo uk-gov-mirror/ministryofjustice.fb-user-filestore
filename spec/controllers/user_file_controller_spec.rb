@@ -8,7 +8,7 @@ RSpec.describe UserFileController, type: :controller do
   describe 'POST #create' do
     let(:headers) { { 'CONTENT_TYPE' => 'application/json' } }
     let(:file) { file_fixture('hello_world.txt').read }
-    let(:encoded_file) { Base64.encode64(file) }
+    let(:encoded_file) { Base64.strict_encode64(file) }
     let(:json) { json_request(encoded_file, allowed_types: []) }
 
     describe 'when allowed types is empty' do

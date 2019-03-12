@@ -49,7 +49,7 @@ RSpec.describe 'file download', type: :request do
       it 'returns correct json' do
         do_get!
         hash = JSON.parse(response.body)
-        expect(hash['file']).to eql(Base64.encode64('Hello World'))
+        expect(hash['file']).to eql(Base64.strict_encode64('Hello World'))
       end
 
       it 'removes the temporary file' do

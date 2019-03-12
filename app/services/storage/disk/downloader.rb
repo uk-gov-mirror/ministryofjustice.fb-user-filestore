@@ -29,7 +29,7 @@ module Storage
 
       def encoded_contents
         download
-        Base64.encode64(file.read)
+        Base64.strict_encode64(file.read)
       end
 
       private

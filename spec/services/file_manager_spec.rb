@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe FileManager do
   let(:file) { file_fixture('hello_world.txt') }
-  let(:encoded_file) { Base64.encode64(file.read) }
+  let(:encoded_file) { Base64.strict_encode64(file.read) }
   let(:user_id) { SecureRandom.uuid }
   let(:service_token) { SecureRandom.hex }
   let(:service_slug) { 'service-slug' }

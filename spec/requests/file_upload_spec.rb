@@ -19,7 +19,7 @@ RSpec.describe 'FileUpload API', type: :request do
 
     describe 'upload with JSON payload' do
       let(:file) { file_fixture('hello_world.txt').read }
-      let(:encoded_file) { Base64.encode64(file) }
+      let(:encoded_file) { Base64.strict_encode64(file) }
       let(:json) { json_request(encoded_file) }
       let(:now) { Time.now.utc }
 
@@ -70,7 +70,7 @@ RSpec.describe 'FileUpload API', type: :request do
 
     describe 'file exceeds max file size' do
       let(:file) { file_fixture('sample.txt').read }
-      let(:encoded_file) { Base64.encode64(file) }
+      let(:encoded_file) { Base64.strict_encode64(file) }
       let(:json) { json_request(encoded_file) }
 
       before do
@@ -92,7 +92,7 @@ RSpec.describe 'FileUpload API', type: :request do
     describe 'Mime type of file is not supported' do
       describe 'bmp format' do
         let(:file) { file_fixture('bitmap.bmp').read }
-        let(:encoded_file) { Base64.encode64(file) }
+        let(:encoded_file) { Base64.strict_encode64(file) }
         let(:json) { json_request(encoded_file) }
 
         before do
@@ -111,7 +111,7 @@ RSpec.describe 'FileUpload API', type: :request do
 
       describe 'html format' do
         let(:file) { file_fixture('hello.html').read }
-        let(:encoded_file) { Base64.encode64(file) }
+        let(:encoded_file) { Base64.strict_encode64(file) }
         let(:json) { json_request(encoded_file) }
 
         before do
@@ -131,7 +131,7 @@ RSpec.describe 'FileUpload API', type: :request do
 
     describe 'file could not be saved to quarantine' do
       let(:file) { file_fixture('hello_world.txt').read }
-      let(:encoded_file) { Base64.encode64(file) }
+      let(:encoded_file) { Base64.strict_encode64(file) }
       let(:json) { json_request(encoded_file) }
 
       let(:file_manager) { double('file_manager', delete_file: true) }
@@ -150,7 +150,7 @@ RSpec.describe 'FileUpload API', type: :request do
 
     describe 'with custom expires option set' do
       let(:file) { file_fixture('hello_world.txt').read }
-      let(:encoded_file) { Base64.encode64(file) }
+      let(:encoded_file) { Base64.strict_encode64(file) }
       let(:json) { json_request(encoded_file, expires: 7) }
       let(:now) { Time.now.utc }
 
