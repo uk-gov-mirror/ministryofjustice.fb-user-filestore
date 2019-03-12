@@ -30,5 +30,9 @@ payload = json_request(Base64.strict_encode64(File.open(Rails.root.join('spec/fi
 payload = { encrypted_user_id_and_token: '12345678901234567890123456789012', iat: Time.now.to_i }
 payload_json = payload.to_json
 query_string_payload = Base64.strict_encode64(payload_json)
-`curl -X GET --header "x-access-token: #{JWT.encode(query_string_payload, 'service-token', 'HS256')}" http://localhost:3000/service/some-service/user/some-user/28d-e71c352d0852ab802592a02168877dc255d9c839a7537d91efed04a5865549c1?payload=#{query_string_payload}`
+response = `curl -X GET --header "x-access-token: #{JWT.encode(payload, 'service-token', 'HS256')}" http://localhost:3000/service/some-service/user/some-user/28d-e71c352d0852ab802592a02168877dc255d9c839a7537d91efed04a5865549c1?payload=#{query_string_payload}`
+
+hash = JSON.parse(response)
+
+File.open('/tmp/out', 'wb') {|f| f.write Base64.strict_decode64(hash['file']) }
 ```
