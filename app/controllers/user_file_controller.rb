@@ -30,7 +30,7 @@ class UserFileController < ApplicationController
     @file_manager.upload
 
     hash = {
-      url: "/service/#{service_slug}/user/#{user_id}/#{@file_manager.fingerprint_with_prefix}",
+      fingerprint: "#{@file_manager.fingerprint_with_prefix}",
       size: @file_manager.file_size,
       type: @file_manager.mime_type,
       date: @file_manager.expires_at.to_i

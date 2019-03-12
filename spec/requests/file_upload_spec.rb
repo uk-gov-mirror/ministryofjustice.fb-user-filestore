@@ -46,7 +46,7 @@ RSpec.describe 'FileUpload API', type: :request do
       it 'returns correct json response' do
         body = JSON.parse(response.body)
 
-        expect(body['url']).to eql('/service/service-slug/user/user-id/28d-a591a6d40bf420404a011733cfb7b190d62c65bf0bcda32b57b277d9ad9f146e')
+        expect(body['fingerprint']).to eql('28d-a591a6d40bf420404a011733cfb7b190d62c65bf0bcda32b57b277d9ad9f146e')
         expect(body['size']).to eql(11)
         expect(body['type']).to eql('text/plain')
         expect(body['date']).to be_within(1.hour).of((now + 28.days).to_i)
@@ -177,7 +177,7 @@ RSpec.describe 'FileUpload API', type: :request do
       it 'returns correct json response' do
         body = JSON.parse(response.body)
 
-        expect(body['url']).to eql('/service/service-slug/user/user-id/7d-a591a6d40bf420404a011733cfb7b190d62c65bf0bcda32b57b277d9ad9f146e')
+        expect(body['fingerprint']).to eql('7d-a591a6d40bf420404a011733cfb7b190d62c65bf0bcda32b57b277d9ad9f146e')
         expect(body['size']).to eql(11)
         expect(body['type']).to eql('text/plain')
         expect(body['date']).to be_within(1.hour).of((now + 7.days).to_i)
