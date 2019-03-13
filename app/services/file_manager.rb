@@ -39,7 +39,7 @@ class FileManager
   end
 
   def type_permitted?
-    allowed_types.include?(mime_type)
+    MimeChecker.new(mime_type, allowed_types).call
   end
 
   def mime_type
