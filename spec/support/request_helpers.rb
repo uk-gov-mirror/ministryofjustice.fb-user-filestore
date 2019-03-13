@@ -6,7 +6,6 @@ module Requests
   end
 end
 
-
 def json_request(encoded_file, options = {})
   expires = options[:expires] || 28
   allowed_types = options[:allowed_types] || %w[
@@ -21,7 +20,6 @@ def json_request(encoded_file, options = {})
   ]
 
   {
-    "iat": '{timestamp}',
     "encrypted_user_id_and_token": '12345678901234567890123456789012',
     "file": encoded_file,
     "policy": {

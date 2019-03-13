@@ -1,5 +1,5 @@
 class UserFileController < ApplicationController
-  before_action :log_warnings, only: [:create]
+  before_action :check_upload_params, only: [:create]
 
   def create
     @file_manager = FileManager.new(encoded_file: params[:file],
@@ -65,12 +65,38 @@ class UserFileController < ApplicationController
 
   private
 
-  def log_warnings
-    Rails.logger.warn('policy.allowed_types was not supplied') if empty_allowed_types?
-  end
+  def check_upload_params
+    if params[:file].blank?
+      return render json: { code: 400, name: 'invalid.file-missing' }, status: 400
+    end
 
-  def empty_allowed_types?
-    params[:policy][:allowed_types].empty?
+    if params[:user_id].blank?
+      return render json: { code: 400, name: 'invalid.user-id-missing' }, status: 400
+    end
+
+    if params[:encrypted_user_id_and_token].blank?
+      return render json: { code: 400, name: 'invalid.encrypted-user-id-and-token-missing' }, status: 400
+    end
+
+    if params[:service_slug].blank?
+      return render json: { code: 400, name: 'invalid.service-slug-missing' }, status: 400
+    end
+
+    if params[:policy].blank?
+      return render json: { code: 400, name: 'invalid.policy-missing' }, status: 400
+    end
+
+    if params[:policy][:max_size].blank?
+      return render json: { code: 400, name: 'invalid.policy-max-size-missing' }, status: 400
+    end
+
+    if params[:policy][:allowed_types].blank?
+      params[:policy][:allowed_types] = ['*/*']
+    end
+
+    if params[:policy][:expires].blank?
+      params[:policy][:expires] = 28
+    end
   end
 
   def downloader

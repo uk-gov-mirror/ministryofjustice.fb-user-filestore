@@ -12,7 +12,7 @@ class FileManager
     @encrypted_user_id_and_token = encrypted_user_id_and_token
     @max_size = options[:max_size] ? options[:max_size].to_i : nil
     @allowed_types = options.fetch(:allowed_types, [])
-    @days_to_live = options.fetch(:days_to_live, 28)
+    @days_to_live = options.fetch(:days_to_live, 28).to_i
   end
 
   def save_to_disk
