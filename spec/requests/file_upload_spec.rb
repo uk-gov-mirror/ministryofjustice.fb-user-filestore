@@ -49,7 +49,7 @@ RSpec.describe 'FileUpload API', type: :request do
         expect(body['fingerprint']).to eql('28d-a591a6d40bf420404a011733cfb7b190d62c65bf0bcda32b57b277d9ad9f146e')
         expect(body['size']).to eql(11)
         expect(body['type']).to eql('text/plain')
-        expect(body['date']).to be_within(1.hour).of((now + 28.days).to_i)
+        expect(body['date']).to be_within(2.hours).of((now + 28.days).to_i)
       end
 
       it 'deletes quarantined file' do
@@ -62,8 +62,17 @@ RSpec.describe 'FileUpload API', type: :request do
           post '/service/service-slug/user/user-id', params: json.to_json, headers: headers
         end
 
-        it 'returns 204 no content' do
-          expect(response.status).to eql(204)
+        it 'returns 200' do
+          expect(response).to be_ok
+        end
+
+        it 'returns response with fingerprint and metadata' do
+          body = JSON.parse(response.body)
+
+          expect(body['fingerprint']).to eql('28d-a591a6d40bf420404a011733cfb7b190d62c65bf0bcda32b57b277d9ad9f146e')
+          expect(body['size']).to eql(11)
+          expect(body['type']).to eql('text/plain')
+          expect(body['date']).to be_within(2.hours).of((now + 28.days).to_i)
         end
       end
     end

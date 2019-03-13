@@ -23,20 +23,27 @@ class UserFileController < ApplicationController
     end
 
     if @file_manager.file_already_exists?
-      return head :no_content
+      hash = {
+        fingerprint: "#{@file_manager.fingerprint_with_prefix}",
+        size: @file_manager.file_size,
+        type: @file_manager.mime_type,
+        date: @file_manager.expires_at.to_i
+      }
+
+      render json: hash, status: :ok
+    else
+      # async?
+      @file_manager.upload
+
+      hash = {
+        fingerprint: "#{@file_manager.fingerprint_with_prefix}",
+        size: @file_manager.file_size,
+        type: @file_manager.mime_type,
+        date: @file_manager.expires_at.to_i
+      }
+
+      render json: hash, status: 201
     end
-
-    # async?
-    @file_manager.upload
-
-    hash = {
-      fingerprint: "#{@file_manager.fingerprint_with_prefix}",
-      size: @file_manager.file_size,
-      type: @file_manager.mime_type,
-      date: @file_manager.expires_at.to_i
-    }
-
-    render json: hash, status: 201
   rescue
     return error_upload_server_error
   ensure
