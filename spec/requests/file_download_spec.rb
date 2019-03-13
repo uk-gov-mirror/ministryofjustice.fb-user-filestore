@@ -9,8 +9,8 @@ RSpec.describe 'file download', type: :request do
 
   let(:payload) do
     {
-      encrypted_user_id_and_token: '12345678901234567890123456789012',
-      iat: Time.now.to_i
+      iat: Time.now.to_i,
+      checksum: 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'
     }
   end
 
@@ -18,9 +18,15 @@ RSpec.describe 'file download', type: :request do
     { "X-Access-Token" => JWT.encode(payload, 'service-token', 'HS256') }
   end
 
+  let(:query_string_payload) do
+    {
+      encrypted_user_id_and_token: '12345678901234567890123456789012'
+    }
+  end
+
   # Buffer.from(JSON.stringify(payload)).toString('Base64')
   let(:payload_query_string) do
-    json = payload.to_json
+    json = query_string_payload.to_json
     base64 = Base64.strict_encode64(json)
   end
 

@@ -15,7 +15,7 @@ RSpec.describe 'user filestore API', type: :request do
     context 'to /service/:service_slug/user/:user_identifier' do
       let(:url) { "/service/#{service_slug}/user/#{user_identifier}" }
 
-      it_behaves_like 'a JWT-authenticated method', :post, '/service/:service_slug/user/:user_identifier', {}
+      it_behaves_like 'a JWT-authenticated method', :post, '/service/:service_slug/user/:user_identifier', { checksum: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855" }
 
       context 'with a valid token' do
         before do
