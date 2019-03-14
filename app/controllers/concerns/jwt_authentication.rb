@@ -53,8 +53,14 @@ module Concerns
           raise Exceptions::ChecksumMissingError.new
         end
 
-        unless payload['checksum'] == Digest::SHA256.hexdigest(request.body.read)
-          raise Exceptions::ChecksumMismatchError.new
+        if params[:payload]
+          unless payload['checksum'] == Digest::SHA256.hexdigest(Base64.strict_decode64(params[:payload]))
+            raise Exceptions::ChecksumMismatchError.new
+          end
+        else
+          unless payload['checksum'] == Digest::SHA256.hexdigest(request.body.read)
+            raise Exceptions::ChecksumMismatchError.new
+          end
         end
 
         Rails.logger.debug "token is valid"
