@@ -76,7 +76,7 @@ class FileManager
                 :allowed_types, :days_to_live, :encrypted_user_id_and_token
 
   def uploader
-    Storage::Disk::Uploader.new(path: path_to_file, key: key)
+    Rails.configuration.x.storage_adapter.constantize::Uploader.new(path: path_to_file, key: key)
   end
 
   def key

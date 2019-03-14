@@ -31,5 +31,7 @@ module FbUserFilestore
     # Middleware like session, flash, cookies can be added back manually.
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
+
+    Rails.configuration.x.storage_adapter = "Storage::S3"
   end
 end
