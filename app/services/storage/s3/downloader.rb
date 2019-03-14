@@ -8,25 +8,30 @@ module Storage
         @key = key
       end
 
-      def download
-        object.download_file(temp_file.path)
-      end
-
       def exists?
         object.exists?
       end
 
-      def purge_from_s3!
+      def purge_from_source!
         object.delete
       end
 
-      def purge_from_disk!
+      def purge_from_destination!
         temp_file.unlink
+      end
+
+      def encoded_contents
+        download
+        Base64.strict_encode64(temp_file.read)
       end
 
       private
 
       attr_accessor :key
+
+      def download
+        object.download_file(temp_file.path)
+      end
 
       def object
         @object ||= Aws::S3::Object.new(bucket_name, key, client: client)
