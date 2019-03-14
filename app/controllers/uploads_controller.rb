@@ -1,6 +1,5 @@
-class UserFileController < ApplicationController
+class UploadsController < ApplicationController
   before_action :check_upload_params, only: [:create]
-  before_action :check_download_params, only: [:show]
 
   def create
     @file_manager = FileManager.new(encoded_file: params[:file],
@@ -51,17 +50,6 @@ class UserFileController < ApplicationController
     @file_manager.delete_file if @file_manager
   end
 
-  def show
-    if downloader.exists?
-      render json: { file: downloader.encoded_contents }, status: 200
-      downloader.purge_from_destination!
-    else
-      render json: { code: 404, name: 'not-found' }, status: 404
-    end
-  rescue StandardError
-    return error_download_server_error
-  end
-
   private
 
   def check_upload_params
@@ -98,38 +86,6 @@ class UserFileController < ApplicationController
     end
   end
 
-  def check_download_params
-    if params[:payload].blank?
-      return render json: { code: 400, name: 'invalid.payload-missing' }, status: 400
-    end
-
-    params.merge!(JSON.parse(Base64.strict_decode64(params[:payload])).select{|k,_| %w{ encrypted_user_id_and_token }.include?(k)})
-
-    if params[:encrypted_user_id_and_token].blank?
-      return render json: { code: 400, name: 'invalid.payload-encrypted-user-id-and-token-missing' }, status: 400
-    end
-  end
-
-  def downloader
-    @downloader ||= Storage::Disk::Downloader.new(key: key)
-  end
-
-  def fingerprint
-    params[:fingerprint_with_prefix].split('-').last
-  end
-
-  def days_to_live
-    params[:fingerprint_with_prefix].split('-').first.scan(/\d/).join.to_i
-  end
-
-  def key
-    @key ||= KeyForFile.new(user_id: params[:user_id],
-                            service_slug: params[:service_slug],
-                            file_fingerprint: fingerprint,
-                            days_to_live: days_to_live,
-                            cipher_key: Digest::MD5.hexdigest(params[:encrypted_user_id_and_token])).call
-  end
-
   def error_large_file(size)
     render json: { code: 400,
                    name: 'invalid.too-large',
@@ -151,15 +107,5 @@ class UserFileController < ApplicationController
   def error_download_server_error
     render json: { code: 503,
                    name: 'unavailable.file-retrieval-failed' }, status: 503
-  end
-
-  # TODO sanatize?
-  def user_id
-    params[:user_id]
-  end
-
-  # TODO sanatize?
-  def service_slug
-    params[:service_slug]
   end
 end

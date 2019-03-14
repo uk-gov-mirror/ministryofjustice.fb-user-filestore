@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe UserFileController, type: :controller do
+RSpec.describe UploadsController, type: :controller do
   before :each do
     allow_any_instance_of(ApplicationController).to receive(:verify_token!)
     allow(ServiceTokenService).to receive(:get).and_return('service-token')
@@ -101,40 +101,6 @@ RSpec.describe UserFileController, type: :controller do
           post :create, params: url_params.merge(json_params)
           expect(controller.params[:policy][:expires]).to eql(28)
           expect(response).to be_successful
-        end
-      end
-    end
-  end
-
-  describe 'GET #show' do
-    let(:headers) { { 'CONTENT_TYPE' => 'application/json' } }
-    let(:payload_query_string) do
-      json = query_string_payload.to_json
-      base64 = Base64.strict_encode64(json)
-    end
-
-    context 'when there are missing paramters' do
-      context 'missing payload' do
-        it 'returns error' do
-          url_params = { service_slug: 'service-slug', user_id: 'abc', fingerprint_with_prefix: '28d-fingerprint' }
-          get :show, params: url_params
-          expect(response).to be_bad_request
-        end
-      end
-
-      context 'missing encrypted_user_id_and_token' do
-        let(:payload_query_string) do
-          json = {}.to_json
-          base64 = Base64.strict_encode64(json)
-        end
-
-        it 'returns error' do
-          url_params = { service_slug: 'service-slug',
-                         user_id: 'abc',
-                         fingerprint_with_prefix: '28d-fingerprint',
-                         payload: payload_query_string }
-          get :show, params: url_params
-          expect(response).to be_bad_request
         end
       end
     end
