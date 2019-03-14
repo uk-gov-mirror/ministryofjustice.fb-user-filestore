@@ -1,5 +1,6 @@
 class UserFileController < ApplicationController
   before_action :check_upload_params, only: [:create]
+  before_action :check_download_params, only: [:show]
 
   def create
     @file_manager = FileManager.new(encoded_file: params[:file],
@@ -51,8 +52,6 @@ class UserFileController < ApplicationController
   end
 
   def show
-    params.merge!(JSON.parse(Base64.strict_decode64(params[:payload])).select{|k,_| %w{ encrypted_user_id_and_token iat }.include?(k)})
-
     if downloader.exists?
       render json: { file: downloader.encoded_contents }, status: 200
       downloader.purge_from_destination!
@@ -96,6 +95,18 @@ class UserFileController < ApplicationController
 
     if params[:policy][:expires].blank?
       params[:policy][:expires] = 28
+    end
+  end
+
+  def check_download_params
+    if params[:payload].blank?
+      return render json: { code: 400, name: 'invalid.payload-missing' }, status: 400
+    end
+
+    params.merge!(JSON.parse(Base64.strict_decode64(params[:payload])).select{|k,_| %w{ encrypted_user_id_and_token }.include?(k)})
+
+    if params[:encrypted_user_id_and_token].blank?
+      return render json: { code: 400, name: 'invalid.payload-encrypted-user-id-and-token-missing' }, status: 400
     end
   end
 
