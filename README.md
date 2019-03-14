@@ -1,3 +1,6 @@
+# fb-user-filestore
+[![Build Status](https://travis-ci.org/ministryofjustice/fb-user-filestore.svg?branch=master)](https://travis-ci.org/ministryofjustice/fb-user-filestore)
+
 ## Environment Variables
 
 Form Builder API service that allows files to be stored and retrieved. This
