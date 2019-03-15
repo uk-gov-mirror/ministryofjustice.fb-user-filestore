@@ -40,3 +40,11 @@ hash = JSON.parse(response)
 
 File.open('/tmp/out', 'wb') {|f| f.write Base64.strict_decode64(hash['file']) }
 ```
+
+## Building docker image
+
+You can build a docker image with the following command
+
+```sh
+docker build .
+```
