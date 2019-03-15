@@ -39,12 +39,28 @@ module Concerns
           }
         )
 
+        Rails.logger.debug("  JWT payload: #{payload}")
+
         # NOTE: verify_iat used to be in the JWT gem, but was removed in v2.2
         # so we have to do it manually
         iat_skew = payload['iat'].to_i - Time.current.to_i
         if iat_skew.abs > leeway.to_i
           Rails.logger.debug("iat skew is #{iat_skew}, max is #{leeway} - INVALID")
           raise Exceptions::TokenNotValidError.new
+        end
+
+        unless payload['checksum']
+          raise Exceptions::ChecksumMissingError.new
+        end
+
+        if params[:payload]
+          unless payload['checksum'] == Digest::SHA256.hexdigest(Base64.strict_decode64(params[:payload]))
+            raise Exceptions::ChecksumMismatchError.new
+          end
+        else
+          unless payload['checksum'] == Digest::SHA256.hexdigest(request.body.read)
+            raise Exceptions::ChecksumMismatchError.new
+          end
         end
 
         Rails.logger.debug "token is valid"

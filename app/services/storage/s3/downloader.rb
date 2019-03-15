@@ -1,6 +1,5 @@
 require 'aws-sdk-s3'
 require 'tempfile'
-require 'securerandom'
 
 module Storage
   module S3
@@ -9,36 +8,37 @@ module Storage
         @key = key
       end
 
-      def download
-        object.download_file(temp_file.path)
-      end
-
       def exists?
         object.exists?
       end
 
-      def purge_from_s3!
+      def purge_from_source!
         object.delete
       end
 
-      def purge_from_disk!
+      def purge_from_destination!
         temp_file.unlink
+      end
+
+      def encoded_contents
+        download
+        Base64.strict_encode64(temp_file.read)
       end
 
       private
 
       attr_accessor :key
 
+      def download
+        object.download_file(temp_file.path)
+      end
+
       def object
         @object ||= Aws::S3::Object.new(bucket_name, key, client: client)
       end
 
       def temp_file
-        @temp_file ||= Tempfile.new(filename_with_extension)
-      end
-
-      def filename_with_extension
-        @filename_with_extension ||= object.metadata.fetch('filename_with_extension', SecureRandom.hex)
+        @temp_file ||= Tempfile.new
       end
 
       def bucket_name

@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe Adapters::ServiceTokenCacheClient do
+RSpec.describe Adapters::ServiceTokenCacheClient do
   describe 'initializing' do
     subject { described_class.new(params) }
 

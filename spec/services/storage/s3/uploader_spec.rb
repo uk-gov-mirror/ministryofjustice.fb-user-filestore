@@ -30,28 +30,26 @@ RSpec.describe Storage::S3::Uploader do
       end
     end
 
-    describe do
-      let(:stub_responses) do
-        {
-          head_object: [
-            { content_length: 150, metadata: { 'filename_with_extension' => 'lorem_ipsum.txt' } },
-            { content_length: 150, metadata: { 'filename_with_extension' => 'lorem_ipsum.txt' } }
-          ],
-          put_object: [{}],
-        }
-      end
-
-      it 'adds meta data with filename with extension' do
-        subject.upload
-
-        downloader = Storage::S3::Downloader.new(key: key)
-        object = downloader.send(:object)
-        expect(object.metadata).to eql({'filename_with_extension' => 'lorem_ipsum.txt'})
-      end
-    end
-
     after :each do
       subject.purge_from_s3!
+    end
+  end
+
+  describe '#created_at' do
+    let(:now) { Time.now.utc }
+
+    let(:stub_responses) do
+      {
+        head_object: [
+          { content_length: 150, last_modified: now },
+        ],
+        put_object: [{}],
+      }
+    end
+
+    it 'returns creation timestamp' do
+      subject.upload
+      expect(subject.created_at).to be_within(10.seconds).of(now)
     end
   end
 end
