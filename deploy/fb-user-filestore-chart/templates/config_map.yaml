@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fb-user-filestore-api-env-{{ .Values.environmentName }}
+  namespace: formbuilder-platform-{{ .Values.environmentName }}
+data:
+  RAILS_ENV: "production"
+  RAILS_SERVE_STATIC_FILES: "false"
+  MAX_IAT_SKEW_SECONDS: "60"
+  SERVICE_TOKEN_CACHE_ROOT_URL: "http://fb-service-token-cache-svc-{{ .Values.environmentName }}/"
