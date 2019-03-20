@@ -17,6 +17,7 @@ spec:
       app: fb-user-filestore-api-{{ .Values.environmentName }}
   policyTypes:
   - Ingress
+  - Egress
   ingress:
   - from:
     - namespaceSelector:
@@ -25,3 +26,10 @@ spec:
     ports:
     - protocol: TCP
       port: 3000
+  egress:
+  - to:
+    - ipBlock:
+        cidr: 100.64.0.10/0 # dns
+    - podSelector:
+        matchLabels:
+          app: fb-service-token-cache-{{ .Values.environmentName }}
