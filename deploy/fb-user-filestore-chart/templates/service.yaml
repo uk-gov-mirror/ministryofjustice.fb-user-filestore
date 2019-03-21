@@ -1,0 +1,15 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: "fb-user-filestore-api-svc-{{ .Values.environmentName }}"
+  labels:
+    app: "fb-user-filestore-api-{{ .Values.environmentName }}"
+    appGroup: "fb-user-filestore"
+spec:
+  ports:
+    # TODO: internal https-only
+  - port: 80
+    name: http
+    targetPort: 3000
+  selector:
+    app: "fb-user-filestore-api-{{ .Values.environmentName }}"

@@ -1,0 +1,35 @@
+# any pod in the formbuilder-services-{{ .Values.environmentName }} namespace
+# should be able to access any pod in the formbuilder-platform-{{ .Values.environmentName }} namespace
+# that has a label "app=fb-user-filestore-api-{{ .Values.environmentName }}"
+# on port 3000
+# NOTE: NetworkPolicy only affects pods, Services are effectively transparent
+# to them - so it doesn't matter that pod x is accessing pod y port p via
+# service z port p2, you have to set up the policy between
+# pod x and pod y port p
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-services-to-access-user-filestore
+  namespace: formbuilder-platform-{{ .Values.environmentName }}
+spec:
+  podSelector:
+    matchLabels:
+      app: fb-user-filestore-api-{{ .Values.environmentName }}
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          name: formbuilder-services-{{ .Values.environmentName }}
+    ports:
+    - protocol: TCP
+      port: 3000
+  egress:
+  - to:
+    - ipBlock:
+        cidr: 100.64.0.10/0 # dns
+    - podSelector:
+        matchLabels:
+          app: fb-service-token-cache-{{ .Values.environmentName }}

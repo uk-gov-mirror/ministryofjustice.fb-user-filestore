@@ -23,3 +23,5 @@
 /config/master.key
 
 spec/examples.txt
+
+node_modules/

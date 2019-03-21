@@ -15,6 +15,7 @@ correctly.
 - `AWS_SECRET_ACCESS_KEY`
 - `AWS_REGION`
 - `AWS_S3_BUCKET_NAME` - Bucket name to upload to and download from
+- `KEY_ENCRYPTION_IV` - must be 16 characters - initialisation vector to determine the key (filename) for the uploaded file
 
 ## Making API calls
 
