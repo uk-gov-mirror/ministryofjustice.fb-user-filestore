@@ -27,7 +27,7 @@ RSpec.describe 'file download', type: :request do
   # Buffer.from(JSON.stringify(payload)).toString('Base64')
   let(:payload_query_string) do
     json = query_string_payload.to_json
-    base64 = Base64.strict_encode64(json)
+    Base64.strict_encode64(json)
   end
 
   before :each do
@@ -42,7 +42,7 @@ RSpec.describe 'file download', type: :request do
 
     context 'when file does exist' do
       around :each do |example|
-        FileUtils.cp(file_fixture('hello_world.txt'), Rails.root.join('tmp/files/28d/6ac6a2fe8dc936178d165c6ddffa39737b7fbb5dfdf17bbf81d2ac7418820a46'))
+        FileUtils.cp(file_fixture('encrypted_file'), Rails.root.join('tmp/files/28d/6ac6a2fe8dc936178d165c6ddffa39737b7fbb5dfdf17bbf81d2ac7418820a46'))
         example.run
         FileUtils.rm(Rails.root.join('tmp/files/28d/6ac6a2fe8dc936178d165c6ddffa39737b7fbb5dfdf17bbf81d2ac7418820a46'))
       end
@@ -55,7 +55,7 @@ RSpec.describe 'file download', type: :request do
       it 'returns correct json' do
         do_get!
         hash = JSON.parse(response.body)
-        expect(hash['file']).to eql(Base64.strict_encode64('Hello World'))
+        expect(hash['file']).to eql(Base64.strict_encode64(file_fixture('lorem_ipsum.txt').read))
       end
 
       it 'removes the temporary file' do

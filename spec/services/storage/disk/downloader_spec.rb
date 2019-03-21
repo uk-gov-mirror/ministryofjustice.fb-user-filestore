@@ -19,7 +19,7 @@ RSpec.describe Storage::Disk::Downloader do
 
     describe do
       it 'downloads file from s3' do
-        encoded_data = Base64.encode64("lorem ipsum\n")
+        encoded_data = Base64.strict_encode64(path.read)
         expect(subject.encoded_contents).to eql(encoded_data)
       end
     end
