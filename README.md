@@ -15,6 +15,8 @@ correctly.
 - `AWS_SECRET_ACCESS_KEY`
 - `AWS_REGION`
 - `AWS_S3_BUCKET_NAME` - Bucket name to upload to and download from
+- `ENCRYPTION_KEY` - The AES-256-CBC key used for encryption / decryption
+- `ENCRYPTION_IV` - Initialization Vector (IV) for the AES-256-CBC
 
 ## Making API calls
 
