@@ -52,10 +52,9 @@ RSpec.describe 'file download', type: :request do
         expect(response).to be_successful
       end
 
-      it 'returns correct json' do
+      it 'returns file' do
         do_get!
-        hash = JSON.parse(response.body)
-        expect(hash['file']).to eql(Base64.strict_encode64('Hello World'))
+        expect(response.body).to eql('Hello World')
       end
 
       it 'removes the temporary file' do
@@ -81,9 +80,9 @@ RSpec.describe 'file download', type: :request do
 
     context 'when there is a problem' do
       it 'returns 503' do
-        downloader = double('downloader', exists?: true, encoded_contents: '')
+        downloader = double('downloader', exists?: true)
         allow(Storage::Disk::Downloader).to receive(:new).and_return(downloader)
-        allow(downloader).to receive(:encoded_contents).and_raise(StandardError.new)
+        allow(downloader).to receive(:contents).and_raise(StandardError.new)
 
         do_get!
 

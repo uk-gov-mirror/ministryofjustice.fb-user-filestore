@@ -12,24 +12,6 @@ RSpec.describe Storage::Disk::Downloader do
     example.run
   end
 
-  describe '#download' do
-    before :each do
-      uploader.upload
-    end
-
-    describe do
-      it 'downloads file from s3' do
-        subject.download
-
-        downloaded_path = subject.send(:file).path
-
-        contents = File.open(downloaded_path).read
-
-        expect(contents).to eql("lorem ipsum\n")
-      end
-    end
-  end
-
   describe '#exists?' do
     context 'when the file doesnt exist' do
       it 'returns false' do
@@ -45,6 +27,23 @@ RSpec.describe Storage::Disk::Downloader do
       it 'returns truthy' do
         expect(subject.exists?).to be_truthy
       end
+    end
+  end
+
+  describe '#contents' do
+    before :each do
+      uploader.upload
+    end
+
+    describe do
+      it 'contains correct contents' do
+        expect(subject.contents).to eql("lorem ipsum\n")
+      end
+    end
+
+    after :each do
+      subject.purge_from_source!
+      subject.purge_from_destination!
     end
   end
 end

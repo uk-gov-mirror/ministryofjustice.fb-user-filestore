@@ -18,7 +18,7 @@ RSpec.describe Storage::S3::Downloader do
   let(:path) { file_fixture('lorem_ipsum.txt') }
   let(:key) { '28d/service-slug/download-fingerprint' }
 
-  describe '#encoded_contents' do
+  describe '#contents' do
     before :each do
       uploader.upload
     end
@@ -31,8 +31,8 @@ RSpec.describe Storage::S3::Downloader do
         }
       end
 
-      it 'returns encoded file contents' do
-        expect(subject.encoded_contents).to eql(Base64.strict_encode64("lorem ipsum\n"))
+      it 'contains correct contents' do
+        expect(subject.contents).to eql("lorem ipsum\n")
       end
     end
 

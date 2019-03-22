@@ -1,9 +1,9 @@
 class DownloadsController < ApplicationController
-  before_action :check_download_params, only: [:show]
+  before_action :check_download_params
 
   def show
     if downloader.exists?
-      render json: { file: downloader.encoded_contents }, status: 200
+      send_data downloader.contents, status: 200
       downloader.purge_from_destination!
     else
       render json: { code: 404, name: 'not-found' }, status: 404
