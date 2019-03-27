@@ -9,7 +9,7 @@ RSpec.describe 'FileUpload API', type: :request do
   end
 
   before :each do
-    allow_any_instance_of(ApplicationController).to receive(:verify_token!)
+    allow_any_instance_of(UploadsController).to receive(:verify_token!)
     allow(ServiceTokenService).to receive(:get).with('service-slug')
                                                .and_return('service-token')
   end

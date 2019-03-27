@@ -1,4 +1,6 @@
 class UploadsController < ApplicationController
+  include Concerns::JWTAuthentication
+
   before_action :check_upload_params, only: [:create]
 
   def create
