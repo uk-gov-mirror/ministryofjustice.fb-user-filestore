@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe UploadsController, type: :controller do
   before :each do
-    allow_any_instance_of(ApplicationController).to receive(:verify_token!)
+    allow_any_instance_of(UploadsController).to receive(:verify_token!)
     allow(ServiceTokenService).to receive(:get).and_return('service-token')
   end
 

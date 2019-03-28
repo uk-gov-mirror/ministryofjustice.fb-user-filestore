@@ -20,9 +20,9 @@ module Storage
         temp_file.unlink
       end
 
-      def encoded_contents
+      def contents
         download
-        Base64.strict_encode64(temp_file.read)
+        temp_file.read
       end
 
       private

@@ -1,9 +1,9 @@
 class DownloadsController < ApplicationController
-  before_action :check_download_params, only: [:show]
+  before_action :check_download_params
 
   def show
     if downloader.exists?
-      render json: { file: downloader.encoded_contents }, status: 200
+      send_data downloader.contents, status: 200
       downloader.purge_from_destination!
     else
       render json: { code: 404, name: 'not-found' }, status: 404
@@ -15,14 +15,8 @@ class DownloadsController < ApplicationController
   private
 
   def check_download_params
-    if params[:payload].blank?
-      return render json: { code: 400, name: 'invalid.payload-missing' }, status: 400
-    end
-
-    params.merge!(JSON.parse(Base64.strict_decode64(params[:payload])).select{|k,_| %w{ encrypted_user_id_and_token }.include?(k)})
-
-    if params[:encrypted_user_id_and_token].blank?
-      return render json: { code: 400, name: 'invalid.payload-encrypted-user-id-and-token-missing' }, status: 400
+    if request.headers['x-encrypted-user-id-and-token'].blank?
+      return render json: { code: 400, name: 'invalid.header-encrypted-user-id-and-token-missing' }, status: 400
     end
   end
 
@@ -43,7 +37,7 @@ class DownloadsController < ApplicationController
                             service_slug: params[:service_slug],
                             file_fingerprint: file_fingerprint,
                             days_to_live: days_to_live,
-                            cipher_key: Digest::MD5.hexdigest(params[:encrypted_user_id_and_token])).call
+                            cipher_key: Digest::MD5.hexdigest(request.headers['x-encrypted-user-id-and-token'])).call
   end
 
   def error_large_file(size)

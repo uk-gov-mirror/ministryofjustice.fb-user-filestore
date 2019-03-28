@@ -8,10 +8,6 @@ module Storage
         @key = key
       end
 
-      def download
-        FileUtils.cp(path, file.path)
-      end
-
       def exists?
         File.exist?(path)
       end
@@ -27,14 +23,18 @@ module Storage
         @file ||= Tempfile.new(filename)
       end
 
-      def encoded_contents
+      def contents
         download
-        Base64.strict_encode64(file.read)
+        file.read
       end
 
       private
 
       attr_accessor :key
+
+      def download
+        FileUtils.cp(path, file.path)
+      end
 
       def path
         Rails.root.join('tmp/files', key)

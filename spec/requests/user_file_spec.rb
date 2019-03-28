@@ -19,7 +19,7 @@ RSpec.describe 'user filestore API', type: :request do
 
       context 'with a valid token' do
         before do
-          allow_any_instance_of(ApplicationController).to receive(:verify_token!)
+          allow_any_instance_of(UploadsController).to receive(:verify_token!)
         end
       end
     end
@@ -28,7 +28,7 @@ RSpec.describe 'user filestore API', type: :request do
   describe 'request error messages' do
     context 'exception TokenNotValidError raised' do
       before do
-        allow_any_instance_of(ApplicationController).to receive(:verify_token!).and_raise(Exceptions::TokenNotValidError)
+        allow_any_instance_of(UploadsController).to receive(:verify_token!).and_raise(Exceptions::TokenNotValidError)
         post "/service/#{service_slug}/user/#{user_identifier}"
       end
 
@@ -43,7 +43,7 @@ RSpec.describe 'user filestore API', type: :request do
 
     context 'exception TokenNotPresentError raised' do
       before do
-        allow_any_instance_of(ApplicationController).to receive(:verify_token!).and_raise(Exceptions::TokenNotPresentError)
+        allow_any_instance_of(UploadsController).to receive(:verify_token!).and_raise(Exceptions::TokenNotPresentError)
         post "/service/#{service_slug}/user/#{user_identifier}"
       end
 
@@ -58,7 +58,7 @@ RSpec.describe 'user filestore API', type: :request do
 
     context 'exception InternalServerError raised' do
       before do
-        allow_any_instance_of(ApplicationController).to receive(:verify_token!).and_raise(StandardError)
+        allow_any_instance_of(UploadsController).to receive(:verify_token!).and_raise(StandardError)
         post "/service/#{service_slug}/user/#{user_identifier}"
       end
       it 'returns a 500 status' do

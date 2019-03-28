@@ -54,7 +54,7 @@ module Concerns
         end
 
         if params[:payload]
-          unless payload['checksum'] == Digest::SHA256.hexdigest(Base64.strict_decode64(params[:payload]))
+          unless payload['checksum'] == Digest::SHA256.hexdigest(Base64.urlsafe_decode64(params[:payload]))
             raise Exceptions::ChecksumMismatchError.new
           end
         else
