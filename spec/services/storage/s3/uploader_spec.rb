@@ -59,7 +59,6 @@ RSpec.describe Storage::S3::Uploader do
     end
 
     around :each do |example|
-      subject.purge_from_s3!
       example.run
       subject.purge_from_s3!
     end
