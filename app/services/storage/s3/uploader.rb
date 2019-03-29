@@ -12,6 +12,7 @@ module Storage
       def upload
         encrypt
         object.upload_file(path_to_encrypted_file)
+        File.delete(path_to_encrypted_file)
       end
 
       def exists?

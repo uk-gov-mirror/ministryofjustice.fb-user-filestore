@@ -50,9 +50,12 @@ RSpec.describe Storage::S3::Uploader do
 
           expect(downloader.contents).to eql('ce030d6aac29d4a5a8b03f7428ff4626')
         end
-      end
 
-      it 'deletes temporary files'
+        it 'deletes temporary files' do
+          subject.upload
+          expect(File.exist?(subject.send(:path_to_encrypted_file))).to be_falsey
+        end
+      end
     end
 
     around :each do |example|
