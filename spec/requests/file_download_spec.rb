@@ -35,7 +35,7 @@ RSpec.describe 'file download', type: :request do
 
       it 'returns file' do
         do_get!
-        expect(response.body).to eql('Hello World')
+        expect(response.body).to eql("lorem ipsum\n")
       end
 
       it 'removes the temporary file' do

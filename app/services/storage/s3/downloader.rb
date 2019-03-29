@@ -31,6 +31,16 @@ module Storage
 
       def download
         object.download_file(temp_file.path)
+        decrypt(temp_file.path)
+      end
+
+      def decrypt(file)
+        file = File.open(file, 'rb')
+        data = file.read
+        result = Cryptography.new(file: data).decrypt
+        file = File.open(file, 'wb')
+        file.write(result)
+        file.close
       end
 
       def object
