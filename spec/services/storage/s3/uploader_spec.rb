@@ -14,23 +14,52 @@ RSpec.describe Storage::S3::Uploader do
     described_class.new(path: path, key: key)
   end
 
+  let(:downloader) { Storage::S3::Downloader.new(key: key) }
+
   describe '#upload' do
     describe do
-      let(:stub_responses) do
-        {
-          head_object: [ false, { content_length: 150 } ],
-          put_object: [{}],
-        }
+      context do
+        let(:stub_responses) do
+          {
+            head_object: [ false, { content_length: 150 } ],
+            put_object: [{}],
+          }
+        end
+
+        it 'uploads file to s3' do
+          expect(subject.exists?).to be_falsey
+          subject.upload
+          expect(subject.exists?).to be_truthy
+        end
       end
 
-      it 'uploads file to s3' do
-        expect(subject.exists?).to be_falsey
-        subject.upload
-        expect(subject.exists?).to be_truthy
+      context do
+        let(:stub_responses) do
+          {
+            head_object: [ { content_length: 150 } ],
+            put_object: [{}],
+            get_object: [{ body: "ce030d6aac29d4a5a8b03f7428ff4626" }]
+          }
+        end
+
+        it 'encrypts file contents' do
+          subject.upload
+
+          # prevent decryption of downloaded file
+          allow(downloader).to receive(:decrypt)
+
+          expect(downloader.contents).to eql('ce030d6aac29d4a5a8b03f7428ff4626')
+        end
+
+        it 'deletes temporary files' do
+          subject.upload
+          expect(File.exist?(subject.send(:path_to_encrypted_file))).to be_falsey
+        end
       end
     end
 
-    after :each do
+    around :each do |example|
+      example.run
       subject.purge_from_s3!
     end
   end

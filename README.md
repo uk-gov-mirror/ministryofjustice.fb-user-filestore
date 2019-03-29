@@ -16,6 +16,8 @@ correctly.
 - `AWS_REGION`
 - `AWS_S3_BUCKET_NAME` - Bucket name to upload to and download from
 - `KEY_ENCRYPTION_IV` - must be 16 characters - initialisation vector to determine the key (filename) for the uploaded file
+- `ENCRYPTION_KEY` - The AES-256-CBC key used for encryption / decryption
+- `ENCRYPTION_IV` - Initialization Vector (IV) for the AES-256-CBC
 
 ## Making API calls
 

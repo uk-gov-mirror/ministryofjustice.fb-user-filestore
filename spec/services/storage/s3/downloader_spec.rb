@@ -27,7 +27,7 @@ RSpec.describe Storage::S3::Downloader do
       let(:download_responses) do
         {
           head_object: [{ content_length: 150 }],
-          get_object: [{ body: "lorem ipsum\n" }]
+          get_object: [{ body: "ce030d6aac29d4a5a8b03f7428ff4626" }]
         }
       end
 

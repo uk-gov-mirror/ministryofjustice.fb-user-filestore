@@ -23,7 +23,7 @@ RSpec.describe 'file download', type: :request do
 
     context 'when file does exist' do
       around :each do |example|
-        FileUtils.cp(file_fixture('hello_world.txt'), Rails.root.join('tmp/files/28d/6ac6a2fe8dc936178d165c6ddffa39737b7fbb5dfdf17bbf81d2ac7418820a46'))
+        FileUtils.cp(file_fixture('encrypted_file'), Rails.root.join('tmp/files/28d/6ac6a2fe8dc936178d165c6ddffa39737b7fbb5dfdf17bbf81d2ac7418820a46'))
         example.run
         FileUtils.rm(Rails.root.join('tmp/files/28d/6ac6a2fe8dc936178d165c6ddffa39737b7fbb5dfdf17bbf81d2ac7418820a46'))
       end
@@ -35,7 +35,7 @@ RSpec.describe 'file download', type: :request do
 
       it 'returns file' do
         do_get!
-        expect(response.body).to eql('Hello World')
+        expect(response.body).to eql("lorem ipsum\n")
       end
 
       it 'removes the temporary file' do

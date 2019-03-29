@@ -20,6 +20,12 @@ RSpec.describe Storage::Disk::Uploader do
         subject.upload
         expect(subject.exists?).to be_truthy
       end
+
+      it 'encrypts contents of file' do
+        subject.upload
+        contents = File.open(subject.send(:destination_path), 'rb').read
+        expect(contents).to_not match(/lorem ipsum/)
+      end
     end
   end
 

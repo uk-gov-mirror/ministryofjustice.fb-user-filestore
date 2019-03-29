@@ -52,3 +52,13 @@ spec:
               secretKeyRef:
                 name: s3-formbuilder-user-filestore-{{ .Values.environmentName }}
                 key: bucket_name
+          - name: ENCRYPTION_IV
+            valueFrom:
+              secretKeyRef:
+                name: fb-user-filestore-api-secrets-{{ .Values.environmentName }}
+                key: encryption_iv
+          - name: ENCRYPTION_KEY
+            valueFrom:
+              secretKeyRef:
+                name: fb-user-filestore-api-secrets-{{ .Values.environmentName }}
+                key: encryption_key

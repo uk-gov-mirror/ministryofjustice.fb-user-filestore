@@ -23,10 +23,10 @@ RSpec.describe FileManager do
 
     it 'expect file to be saved to disk' do
       subject.save_to_disk
-
       subject.upload
 
-      expect(File.open("tmp/files/#{subject.send(:key)}").read).to eql('Hello World')
+      encrypted_data = Cryptography.new(file: File.open(file).read).encrypt
+      expect(File.open("tmp/files/#{subject.send(:key)}").read).to eql(encrypted_data)
     end
   end
 
