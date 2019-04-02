@@ -41,7 +41,7 @@ RSpec.describe FileManager do
   end
 
   describe '#file_too_large?' do
-  let(:file) { file_fixture('bitmap.bmp') } # ~1.3kb
+    let(:file) { file_fixture('bitmap.bmp') } # ~1.3kb
 
     before :each do
       subject.save_to_disk
@@ -77,7 +77,7 @@ RSpec.describe FileManager do
   end
 
   describe '#type_permitted?' do
-  let(:file) { file_fixture('image.png') }
+    let(:file) { file_fixture('image.png') }
 
     before :each do
       subject.save_to_disk
@@ -108,6 +108,22 @@ RSpec.describe FileManager do
 
       it 'returns false' do
         expect(subject.type_permitted?).to be_falsey
+      end
+    end
+  end
+
+  describe '#has_virus?' do
+    context 'when file has a virus' do
+      it 'returns true' do
+        allow_any_instance_of(MalwareScanner).to receive(:virus_found?).and_return(true)
+        expect(subject.has_virus?).to be_truthy
+      end
+    end
+
+    context 'when files does not have a virus' do
+      it 'returns false' do
+        allow_any_instance_of(MalwareScanner).to receive(:virus_found?).and_return(false)
+        expect(subject.has_virus?).to be_falsey
       end
     end
   end

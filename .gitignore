@@ -25,3 +25,5 @@
 spec/examples.txt
 
 node_modules/
+
+config/clamd/*

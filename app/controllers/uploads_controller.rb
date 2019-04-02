@@ -24,6 +24,10 @@ class UploadsController < ApplicationController
       return error_unsupported_file_type(@file_manager.mime_type)
     end
 
+    if @file_manager.has_virus?
+      return error_virus_error
+    end
+
     if @file_manager.file_already_exists?
       hash = {
         fingerprint: "#{@file_manager.fingerprint_with_prefix}",
@@ -109,5 +113,10 @@ class UploadsController < ApplicationController
   def error_download_server_error
     render json: { code: 503,
                    name: 'unavailable.file-retrieval-failed' }, status: 503
+  end
+
+  def error_virus_error
+    render json: { code: 400,
+                   name: 'invalid.virus' }, status: 400
   end
 end

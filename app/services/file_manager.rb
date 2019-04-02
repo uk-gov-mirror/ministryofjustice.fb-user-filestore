@@ -62,6 +62,10 @@ class FileManager
     uploader.exists?
   end
 
+  def has_virus?
+    MalwareScanner.call(path_to_file)
+  end
+
   def delete_file
     FileUtils.rm_f(path_to_file)
   end
