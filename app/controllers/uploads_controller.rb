@@ -110,11 +110,6 @@ class UploadsController < ApplicationController
                    name: 'unavailable.file-store-failed' }, status: 503
   end
 
-  def error_download_server_error
-    render json: { code: 503,
-                   name: 'unavailable.file-retrieval-failed' }, status: 503
-  end
-
   def error_virus_error
     render json: { code: 400,
                    name: 'invalid.virus' }, status: 400

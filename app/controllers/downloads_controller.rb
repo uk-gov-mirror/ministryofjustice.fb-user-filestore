@@ -53,11 +53,6 @@ class DownloadsController < ApplicationController
                    type: type }, status: 400
   end
 
-  def error_upload_server_error
-    render json: { code: 503,
-                   name: 'unavailable.file-store-failed' }, status: 503
-  end
-
   def error_download_server_error
     render json: { code: 503,
                    name: 'unavailable.file-retrieval-failed' }, status: 503
