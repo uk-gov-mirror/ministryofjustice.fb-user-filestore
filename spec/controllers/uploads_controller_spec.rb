@@ -51,7 +51,7 @@ RSpec.describe UploadsController, type: :controller do
           json_params = json
           json_params.delete(:encrypted_user_id_and_token)
           post :create, params: url_params.merge(json_params)
-          expect(response).to be_bad_request
+          expect(response).to be_forbidden
         end
       end
 

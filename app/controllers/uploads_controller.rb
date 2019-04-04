@@ -68,7 +68,7 @@ class UploadsController < ApplicationController
     end
 
     if params[:encrypted_user_id_and_token].blank?
-      return render json: { code: 400, name: 'invalid.encrypted-user-id-and-token-missing' }, status: 400
+      return render json: { code: 403, name: 'forbidden.user-id-token-missing' }, status: 403
     end
 
     if params[:service_slug].blank?
@@ -101,7 +101,7 @@ class UploadsController < ApplicationController
 
   def error_unsupported_file_type(type)
     render json: { code: 400,
-                   name: 'invalid type',
+                   name: 'invalid.type',
                    type: type }, status: 400
   end
 

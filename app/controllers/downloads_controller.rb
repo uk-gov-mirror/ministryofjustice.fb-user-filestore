@@ -16,7 +16,7 @@ class DownloadsController < ApplicationController
 
   def check_download_params
     if request.headers['x-encrypted-user-id-and-token'].blank?
-      return render json: { code: 400, name: 'invalid.header-encrypted-user-id-and-token-missing' }, status: 400
+      return render json: { code: 403, name: 'forbidden.user-id-token-missing' }, status: 403
     end
   end
 

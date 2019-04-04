@@ -17,7 +17,7 @@ RSpec.describe DownloadsController, type: :controller do
         it 'returns error' do
           url_params = { service_slug: 'service-slug', user_id: 'abc', fingerprint_with_prefix: '28d-fingerprint' }
           get :show, params: url_params
-          expect(response).to be_bad_request
+          expect(response).to be_forbidden
         end
       end
 
@@ -33,7 +33,7 @@ RSpec.describe DownloadsController, type: :controller do
                          fingerprint_with_prefix: '28d-fingerprint',
                          payload: payload_query_string }
           get :show, params: url_params
-          expect(response).to be_bad_request
+          expect(response).to be_forbidden
         end
       end
     end
