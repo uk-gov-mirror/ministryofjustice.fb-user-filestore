@@ -1,6 +1,6 @@
 FROM ministryofjustice/ruby:2.5.1
 
-RUN apt-get update && apt-get install -y nodejs postgresql-contrib libpq-dev
+RUN apt-get update && apt-get install -y nodejs postgresql-contrib libpq-dev clamav-daemon
 
 ENV RAILS_ROOT /var/www/fb-user-filestore
 RUN mkdir -p $RAILS_ROOT

@@ -9,3 +9,4 @@ data:
   MAX_IAT_SKEW_SECONDS: "60"
   SERVICE_TOKEN_CACHE_ROOT_URL: "http://fb-service-token-cache-svc-{{ .Values.environmentName }}/"
   AWS_REGION: "eu-west-1"
+  AV_HOST: "fb-av-svc-{{ .Values.environmentName }}"

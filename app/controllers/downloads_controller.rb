@@ -16,7 +16,7 @@ class DownloadsController < ApplicationController
 
   def check_download_params
     if request.headers['x-encrypted-user-id-and-token'].blank?
-      return render json: { code: 400, name: 'invalid.header-encrypted-user-id-and-token-missing' }, status: 400
+      return render json: { code: 403, name: 'forbidden.user-id-token-missing' }, status: 403
     end
   end
 
@@ -51,11 +51,6 @@ class DownloadsController < ApplicationController
     render json: { code: 400,
                    name: 'invalid type',
                    type: type }, status: 400
-  end
-
-  def error_upload_server_error
-    render json: { code: 503,
-                   name: 'unavailable.file-store-failed' }, status: 503
   end
 
   def error_download_server_error

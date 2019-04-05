@@ -24,6 +24,10 @@ class UploadsController < ApplicationController
       return error_unsupported_file_type(@file_manager.mime_type)
     end
 
+    if @file_manager.has_virus?
+      return error_virus_error
+    end
+
     if @file_manager.file_already_exists?
       hash = {
         fingerprint: "#{@file_manager.fingerprint_with_prefix}",
@@ -64,7 +68,7 @@ class UploadsController < ApplicationController
     end
 
     if params[:encrypted_user_id_and_token].blank?
-      return render json: { code: 400, name: 'invalid.encrypted-user-id-and-token-missing' }, status: 400
+      return render json: { code: 403, name: 'forbidden.user-id-token-missing' }, status: 403
     end
 
     if params[:service_slug].blank?
@@ -97,7 +101,7 @@ class UploadsController < ApplicationController
 
   def error_unsupported_file_type(type)
     render json: { code: 400,
-                   name: 'invalid type',
+                   name: 'invalid.type',
                    type: type }, status: 400
   end
 
@@ -106,8 +110,8 @@ class UploadsController < ApplicationController
                    name: 'unavailable.file-store-failed' }, status: 503
   end
 
-  def error_download_server_error
-    render json: { code: 503,
-                   name: 'unavailable.file-retrieval-failed' }, status: 503
+  def error_virus_error
+    render json: { code: 400,
+                   name: 'invalid.virus' }, status: 400
   end
 end

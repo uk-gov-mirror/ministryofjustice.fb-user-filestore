@@ -13,6 +13,10 @@ RSpec.describe UploadsController, type: :controller do
     let(:json) { json_request(encoded_file) }
 
     context 'when there are missing paramters' do
+      before :each do
+        disable_malware_scanner!
+      end
+
       context 'missing file' do
         it 'returns error' do
           url_params = { service_slug: 'service-slug', user_id: 'abc' }
@@ -47,7 +51,7 @@ RSpec.describe UploadsController, type: :controller do
           json_params = json
           json_params.delete(:encrypted_user_id_and_token)
           post :create, params: url_params.merge(json_params)
-          expect(response).to be_bad_request
+          expect(response).to be_forbidden
         end
       end
 
@@ -73,6 +77,8 @@ RSpec.describe UploadsController, type: :controller do
 
       context 'missing policy.allowed_types' do
         it 'defaults to ["*/*"]' do
+          disable_malware_scanner!
+
           url_params = { service_slug: 'service-slug', user_id: 'abc' }
           json_params = json
           json_params[:policy].delete(:allowed_types)
@@ -102,6 +108,30 @@ RSpec.describe UploadsController, type: :controller do
           expect(controller.params[:policy][:expires]).to eql(28)
           expect(response).to be_successful
         end
+      end
+    end
+
+    context 'when file has a virus' do
+      before :each do
+        allow_any_instance_of(FileManager).to receive(:has_virus?).and_return(true)
+      end
+
+      it 'returns a 400' do
+        url_params = { service_slug: 'service-slug', user_id: 'abc' }
+        json_params = json
+        post :create, params: url_params.merge(json_params)
+        expect(response.status).to eql(400)
+      end
+
+      it 'returns virus error message' do
+        url_params = { service_slug: 'service-slug', user_id: 'abc' }
+        json_params = json
+        post :create, params: url_params.merge(json_params)
+
+        hash = JSON.parse(response.body)
+
+        expect(hash['code']).to eql(400)
+        expect(hash['name']).to eql('invalid.virus')
       end
     end
   end

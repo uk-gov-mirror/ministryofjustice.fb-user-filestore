@@ -9,6 +9,7 @@ RSpec.describe 'FileUpload API', type: :request do
   end
 
   before :each do
+    disable_malware_scanner!
     allow_any_instance_of(UploadsController).to receive(:verify_token!)
     allow(ServiceTokenService).to receive(:get).with('service-slug')
                                                .and_return('service-token')
@@ -114,7 +115,7 @@ RSpec.describe 'FileUpload API', type: :request do
 
         it 'returns JSON with invalid type content' do
           result = JSON.parse(response.body)
-          expect(result['name']).to eq('invalid type')
+          expect(result['name']).to eq('invalid.type')
         end
       end
 
@@ -133,7 +134,7 @@ RSpec.describe 'FileUpload API', type: :request do
 
         it 'returns JSON with invalid type content' do
           result = JSON.parse(response.body)
-          expect(result['name']).to eq('invalid type')
+          expect(result['name']).to eq('invalid.type')
         end
       end
     end
