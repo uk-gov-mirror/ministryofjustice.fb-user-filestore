@@ -31,7 +31,7 @@ endif
 
 init:
 	$(eval export ECR_REPO_NAME=fb-user-filestore-api)
-	$(eval export ECR_REPO_URL=926803513772.dkr.ecr.eu-west-1.amazonaws.com/formbuilder/fb-user-filestore-api)
+	$(eval export ECR_REPO_URL=754256621582.dkr.ecr.eu-west-2.amazonaws.com/formbuilder/fb-user-filestore-api)
 
 # install aws cli w/o sudo
 install_build_dependencies: init
@@ -46,7 +46,7 @@ build: install_build_dependencies
 		docker tag ${ECR_REPO_NAME}:latest-${env_stub} ${ECR_REPO_URL}:latest-${env_stub}
 
 login: init
-	@eval $(shell aws ecr get-login --no-include-email --region eu-west-1)
+	@eval $(shell aws ecr get-login --no-include-email --region eu-west-2)
 
 push: login
 	docker push ${ECR_REPO_URL}:latest-${env_stub}

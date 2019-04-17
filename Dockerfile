@@ -22,6 +22,10 @@ RUN apt-get install -y kubectl
 ENV APP_PORT 3000
 EXPOSE $APP_PORT
 
+RUN groupadd -r deploy && useradd -m -u 1001 -r -g deploy deploy
+RUN chown -R deploy $RAILS_ROOT
+USER 1001
+
 # run the rails server
 ARG RAILS_ENV=production
 CMD bundle exec rails s -e ${RAILS_ENV} -p ${APP_PORT} --binding=0.0.0.0
