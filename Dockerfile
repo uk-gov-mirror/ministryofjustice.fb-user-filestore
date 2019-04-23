@@ -7,7 +7,7 @@ RUN mkdir -p $RAILS_ROOT
 WORKDIR $RAILS_ROOT
 
 COPY . $RAILS_ROOT
-RUN bundle install --jobs 4 --retry 5
+RUN bundle install --jobs 4 --retry 5 --deployment --without test development
 
 # install kubectl as described at
 # https://kubernetes.io/docs/tasks/tools/install-kubectl/
