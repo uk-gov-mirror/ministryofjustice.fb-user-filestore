@@ -7,7 +7,7 @@ RUN mkdir -p $RAILS_ROOT
 WORKDIR $RAILS_ROOT
 
 COPY . $RAILS_ROOT
-RUN bundle install --jobs 4 --retry 5
+RUN bundle install --jobs 4 --retry 5 --deployment --without test development
 
 # install kubectl as described at
 # https://kubernetes.io/docs/tasks/tools/install-kubectl/
@@ -21,6 +21,10 @@ RUN apt-get install -y kubectl
 # allow access to port 3000
 ENV APP_PORT 3000
 EXPOSE $APP_PORT
+
+RUN groupadd -r deploy && useradd -m -u 1001 -r -g deploy deploy
+RUN chown -R deploy $RAILS_ROOT
+USER 1001
 
 # run the rails server
 ARG RAILS_ENV=production
