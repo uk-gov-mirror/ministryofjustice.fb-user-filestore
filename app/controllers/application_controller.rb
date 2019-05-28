@@ -1,5 +1,6 @@
 class ApplicationController < ActionController::API
   include Concerns::ErrorHandling
+  include Concerns::JWTAuthentication
 
   before_action :enforce_json_only
 

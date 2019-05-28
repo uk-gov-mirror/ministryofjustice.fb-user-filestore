@@ -49,20 +49,6 @@ module Concerns
           raise Exceptions::TokenNotValidError.new
         end
 
-        unless payload['checksum']
-          raise Exceptions::ChecksumMissingError.new
-        end
-
-        if params[:payload]
-          unless payload['checksum'] == Digest::SHA256.hexdigest(Base64.urlsafe_decode64(params[:payload]))
-            raise Exceptions::ChecksumMismatchError.new
-          end
-        else
-          unless payload['checksum'] == Digest::SHA256.hexdigest(request.body.read)
-            raise Exceptions::ChecksumMismatchError.new
-          end
-        end
-
         Rails.logger.debug "token is valid"
       rescue StandardError => e
         Rails.logger.debug("Couldn't parse that token - error #{e}")
