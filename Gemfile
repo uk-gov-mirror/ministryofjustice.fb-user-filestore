@@ -16,8 +16,12 @@ group :development, :test do
 end
 
 group :development do
-   gem 'guard-rspec', require: false
-   gem 'timecop'
+  gem 'guard-rspec', require: false
+  gem 'timecop'
+end
+
+group :test do
+  gem 'simplecov', require: false
 end
 
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
