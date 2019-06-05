@@ -27,3 +27,7 @@ spec/examples.txt
 node_modules/
 
 config/clamd/*.conf
+
+# Ignore node_modules and package-lock.json
+node_modules
+package-lock.json
