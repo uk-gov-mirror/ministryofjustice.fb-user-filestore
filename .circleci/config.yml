@@ -53,7 +53,22 @@ jobs:
           command: 'kubectl config use-context circleci'
       - run:
           name: build and push docker images
-          command: 'cd ~/circle/git/fb-user-filestore && ./scripts/build_platform_images.sh -p test'
+          command: './scripts/build_platform_images.sh -p test'
+      - run:
+          name: kubectl configure credentials
+          command: 'kubectl config set-credentials "circleci_test_dev" --token="$KUBE_TOKEN_TEST_DEV"'
+      - run:
+          name: kubectl configure context
+          command: 'kubectl config set-context "circleci_test_dev" --cluster="$KUBE_CLUSTER" --user="circleci_test_dev" --namespace="formbuilder-platform-test-dev"'
+      - run:
+          name: kubectl use circleci context
+          command: 'kubectl config use-context circleci_test_dev'
+      - run:
+          name: apply kubernetes changes
+          command: './scripts/deploy_platform.sh -p test -d dev'
+      - run:
+          name: delete pods
+          command: './scripts/restart_platform_pods.sh -p test -d dev -c circleci_test_dev'
 
 workflows:
   version: 2
@@ -63,3 +78,6 @@ workflows:
       - build:
           requires:
             - test
+          filters:
+            branches:
+              only: master
