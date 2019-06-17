@@ -64,10 +64,10 @@ jobs:
           name: kubectl use circleci context
           command: 'kubectl config use-context circleci_test_dev'
       - run:
-          name: apply kubernetes changes
+          name: apply kubernetes changes to test dev
           command: './scripts/deploy_platform.sh -p test -d dev'
       - run:
-          name: delete pods
+          name: delete pods in test dev
           command: './scripts/restart_platform_pods.sh -p test -d dev -c circleci_test_dev'
       - run:
           name: kubectl configure credentials
@@ -79,11 +79,26 @@ jobs:
           name: kubectl use circleci context
           command: 'kubectl config use-context circleci_test_staging'
       - run:
-          name: apply kubernetes changes
+          name: apply kubernetes changes to test staging
           command: './scripts/deploy_platform.sh -p test -d staging'
       - run:
-          name: delete pods
+          name: delete pods in test staging
           command: './scripts/restart_platform_pods.sh -p test -d staging -c circleci_test_staging'
+      - run:
+          name: kubectl configure credentials
+          command: 'kubectl config set-credentials "circleci_test_production" --token="$KUBE_TOKEN_TEST_PRODUCTION"'
+      - run:
+          name: kubectl configure context
+          command: 'kubectl config set-context "circleci_test_production" --cluster="$KUBE_CLUSTER" --user="circleci_test_production" --namespace="formbuilder-platform-test-production"'
+      - run:
+          name: kubectl use circleci context
+          command: 'kubectl config use-context circleci_test_production'
+      - run:
+          name: apply kubernetes changes to test production
+          command: './scripts/deploy_platform.sh -p test -d production'
+      - run:
+          name: delete pods in test production
+          command: './scripts/restart_platform_pods.sh -p test -d production -c circleci_test_production'
 
 workflows:
   version: 2
