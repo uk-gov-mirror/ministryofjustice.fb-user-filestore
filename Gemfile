@@ -4,7 +4,6 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 ruby '2.5.1'
 
 gem 'rails', '~> 5.2.1', '>= 5.2.1.1'
-gem 'pg', '>= 0.18', '< 2.0'
 gem 'puma', '~> 3.11'
 gem 'aws-sdk-s3', '~> 1'
 gem 'jwt'
@@ -15,9 +14,12 @@ group :development, :test do
   gem 'dotenv-rails'
 end
 
+group :test do
+  gem 'timecop'
+end
+
 group :development do
    gem 'guard-rspec', require: false
-   gem 'timecop'
 end
 
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]

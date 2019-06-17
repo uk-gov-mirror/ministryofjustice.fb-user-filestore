@@ -1,4 +1,5 @@
 # fb-user-filestore
+[![CircleCI](https://circleci.com/gh/ministryofjustice/fb-user-filestore/tree/master.svg?style=svg)](https://circleci.com/gh/ministryofjustice/fb-user-filestore/tree/master)
 [![Build Status](https://travis-ci.org/ministryofjustice/fb-user-filestore.svg?branch=master)](https://travis-ci.org/ministryofjustice/fb-user-filestore)
 
 ## Environment Variables
