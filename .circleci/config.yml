@@ -69,6 +69,21 @@ jobs:
       - run:
           name: delete pods
           command: './scripts/restart_platform_pods.sh -p test -d dev -c circleci_test_dev'
+      - run:
+          name: kubectl configure credentials
+          command: 'kubectl config set-credentials "circleci_test_staging" --token="$KUBE_TOKEN_TEST_STAGING"'
+      - run:
+          name: kubectl configure context
+          command: 'kubectl config set-context "circleci_test_staging" --cluster="$KUBE_CLUSTER" --user="circleci_test_staging" --namespace="formbuilder-platform-test-staging"'
+      - run:
+          name: kubectl use circleci context
+          command: 'kubectl config use-context circleci_test_staging'
+      - run:
+          name: apply kubernetes changes
+          command: './scripts/deploy_platform.sh -p test -d staging'
+      - run:
+          name: delete pods
+          command: './scripts/restart_platform_pods.sh -p test -d staging -c circleci_test_staging'
 
 workflows:
   version: 2
