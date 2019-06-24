@@ -7,6 +7,7 @@ gem 'rails', '~> 5.2.1', '>= 5.2.1.1'
 gem 'puma', '~> 3.11'
 gem 'aws-sdk-s3', '~> 1'
 gem 'jwt'
+gem 'sentry-raven'
 
 group :development, :test do
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
