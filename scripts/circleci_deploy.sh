@@ -20,7 +20,6 @@ echo "kubectl use circleci context"
 kubectl config use-context "circleci_${environment_name}_${deployment_name}"
 
 echo "apply kubernetes changes to ${environment_name} ${deployment_name}"
-./scripts/deploy_platform.sh -p $environment_name -d $deployment_name
-
-echo "delete pods in ${environment_name} ${deployment_name}"
-./scripts/restart_platform_pods.sh -p $environment_name -d $deployment_name -c "circleci_${environment_name}_${deployment_name}"
+echo $CIRCLE_SHA1
+echo "running deploy"
+./scripts/deploy_platform.sh -p $environment_name -d $deployment_name -s $CIRCLE_SHA1
