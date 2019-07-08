@@ -1,13 +1,14 @@
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby '2.5.1'
+ruby File.read('.ruby-version').chomp
 
 gem 'rails', '~> 5.2.1', '>= 5.2.1.1'
-gem 'puma', '~> 3.11'
+gem 'puma', '~> 3.12'
 gem 'aws-sdk-s3', '~> 1'
 gem 'jwt'
 gem 'sentry-raven'
+gem 'tzinfo-data'
 
 group :development, :test do
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
@@ -22,5 +23,3 @@ end
 group :development do
    gem 'guard-rspec', require: false
 end
-
-gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]

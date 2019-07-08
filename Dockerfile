@@ -1,31 +1,20 @@
-FROM ministryofjustice/ruby:2.5.1
+FROM ruby:2.6.3-alpine3.9
 
-RUN apt-get update && apt-get install -y nodejs postgresql-contrib libpq-dev clamav-daemon
+RUN apk add --update --no-cache --virtual .build-deps build-base libgcrypt-dev \
+ libxml2-dev libxslt-dev nodejs postgresql-contrib postgresql-dev
+RUN apk add file
+RUN apk add clamav-daemon
 
-ENV RAILS_ROOT /var/www/fb-user-filestore
-RUN mkdir -p $RAILS_ROOT
-WORKDIR $RAILS_ROOT
+WORKDIR /usr/src/app
 
-COPY . $RAILS_ROOT
-RUN bundle install --jobs 4 --retry 5 --deployment --without test development
+COPY . .
 
-# install kubectl as described at
-# https://kubernetes.io/docs/tasks/tools/install-kubectl/
-RUN apt-get update && apt-get install -y apt-transport-https
-RUN curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
-RUN touch /etc/apt/sources.list.d/kubernetes.list
-RUN echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | tee -a /etc/apt/sources.list.d/kubernetes.list
-RUN apt-get update
-RUN apt-get install -y kubectl
+RUN bundle install --jobs 4 --retry 5 --without test development
 
-# allow access to port 3000
-ENV APP_PORT 3000
-EXPOSE $APP_PORT
-
-RUN groupadd -r deploy && useradd -m -u 1001 -r -g deploy deploy
-RUN chown -R deploy $RAILS_ROOT
+RUN apk del .build-deps
+RUN addgroup -S appgroup && adduser -S 1001 -G appgroup
+RUN chown -R 1001:appgroup .
 USER 1001
 
-# run the rails server
 ARG RAILS_ENV=production
-CMD bundle exec rails s -e ${RAILS_ENV} -p ${APP_PORT} --binding=0.0.0.0
+CMD bundle exec rails s -e ${RAILS_ENV} --binding=0.0.0.0

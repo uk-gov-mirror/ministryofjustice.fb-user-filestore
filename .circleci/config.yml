@@ -3,7 +3,7 @@ jobs:
   test:
     working_directory: ~/circle
     docker:
-      - image: ministryofjustice/ruby:2.5.1
+      - image: circleci/ruby:2.6.3
         environment:
           RAILS_ENV: test
     steps:
