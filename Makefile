@@ -23,7 +23,7 @@ spec: build
 	docker-compose run --rm app bundle exec rspec
 
 init:
-	$(eval export ECR_REPO_URL_ROOT=754256621582.dkr.ecr.eu-west-2.amazonaws.com/formbuilder)
+	$(eval export ECR_REPO_URL=754256621582.dkr.ecr.eu-west-2.amazonaws.com/formbuilder)
 
 install_build_dependencies:
 	pip install --user awscli
