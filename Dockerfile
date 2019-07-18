@@ -1,19 +1,21 @@
 FROM ruby:2.6.3-alpine3.9
 
-RUN apk add --update --no-cache --virtual .build-deps build-base libgcrypt-dev \
- libxml2-dev libxslt-dev nodejs postgresql-contrib postgresql-dev
-RUN apk add file
-RUN apk add clamav-daemon
+RUN apk add build-base libgcrypt-dev libxml2-dev libxslt-dev postgresql-contrib postgresql-dev file clamav-daemon
 
-WORKDIR /usr/src/app
+RUN addgroup -g 1001 -S appgroup && \
+  adduser -u 1001 -S appuser -G appgroup
+
+WORKDIR /app
+
+COPY Gemfile* .ruby-version ./
+
+ARG BUNDLE_FLAGS
+RUN bundle install --no-cache ${BUNDLE_FLAGS}
 
 COPY . .
 
-RUN bundle install --jobs 4 --retry 5 --without test development
+RUN chown -R 1001:appgroup /app
 
-RUN apk del .build-deps
-RUN addgroup -S appgroup && adduser -S 1001 -G appgroup
-RUN chown -R 1001:appgroup .
 USER 1001
 
 ARG RAILS_ENV=production
