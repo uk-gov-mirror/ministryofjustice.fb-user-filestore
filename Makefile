@@ -31,7 +31,7 @@ install_build_dependencies:
 
 build_and_push: install_build_dependencies init
 	@eval $(shell aws ecr get-login --no-include-email --region eu-west-2)
-	docker build -t ${ECR_REPO_URL}:latest -t ${ECR_REPO_URL}:${CIRCLE_SHA1} -f ./Dockerfile .
+	docker build --build-arg BUNDLE_FLAGS="--without test development" -t ${ECR_REPO_URL}:latest -t ${ECR_REPO_URL}:${CIRCLE_SHA1} -f ./Dockerfile .
 	docker push ${ECR_REPO_URL}:latest
 	docker push ${ECR_REPO_URL}:${CIRCLE_SHA1}
 
