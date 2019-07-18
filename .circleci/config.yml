@@ -8,6 +8,7 @@ jobs:
           RAILS_ENV: test
     steps:
       - checkout
+      - setup_remote_docker
       - run:
           name: test
           command: 'make spec'
@@ -17,6 +18,7 @@ jobs:
       - image: asmega/fb-builder:latest
     steps:
       - checkout
+      - setup_remote_docker
       - add_ssh_keys:
           fingerprints:
             - "2e:08:38:15:1b:8d:50:fb:35:8e:98:57:76:f7:ef:49"
@@ -32,7 +34,6 @@ jobs:
       - run:
           name: npm install
           command: 'npm install'
-      - setup_remote_docker
       - run:
           name: build and deploy docker images
           command: './scripts/circleci_build.sh test'
@@ -51,6 +52,7 @@ jobs:
       - image: asmega/fb-builder:latest
     steps:
       - checkout
+      - setup_remote_docker
       - add_ssh_keys:
           fingerprints:
             - "2e:08:38:15:1b:8d:50:fb:35:8e:98:57:76:f7:ef:49"
@@ -66,7 +68,6 @@ jobs:
       - run:
           name: npm install
           command: 'npm install'
-      - setup_remote_docker
       - run:
           name: build and deploy docker images
           command: './scripts/circleci_build.sh integration'
@@ -85,6 +86,7 @@ jobs:
       - image: asmega/fb-builder:latest
     steps:
       - checkout
+      - setup_remote_docker
       - add_ssh_keys:
           fingerprints:
             - "2e:08:38:15:1b:8d:50:fb:35:8e:98:57:76:f7:ef:49"
@@ -100,7 +102,6 @@ jobs:
       - run:
           name: npm install
           command: 'npm install'
-      - setup_remote_docker
       - run:
           name: build and deploy docker images
           command: './scripts/circleci_build.sh live'
