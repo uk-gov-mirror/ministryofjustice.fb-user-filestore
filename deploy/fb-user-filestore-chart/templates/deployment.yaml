@@ -16,7 +16,7 @@ spec:
     spec:
       serviceAccountName: "formbuilder-user-filestore-{{ .Values.environmentName }}"
       initContainers:
-      - name: "fb-user-filestore-api-{{ .Values.environmentName }}"
+      - name: "testy-fb-user-filestore-api-{{ .Values.environmentName }}"
         volumeMounts:
         - mountPath: /app/tmp/files
           name: tmp-files
