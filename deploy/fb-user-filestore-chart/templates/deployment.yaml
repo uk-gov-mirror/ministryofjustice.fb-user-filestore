@@ -18,6 +18,9 @@ spec:
       containers:
       - name: "fb-user-filestore-api-{{ .Values.environmentName }}"
         image: "754256621582.dkr.ecr.eu-west-2.amazonaws.com/formbuilder/fb-user-filestore-api:{{ .Values.circleSha1 }}"
+        volumeMounts:
+          - name: tmp-files
+            mountPath: '/please_work'
         imagePullPolicy: Always
         ports:
           - containerPort: 3000
@@ -81,9 +84,8 @@ spec:
               secretKeyRef:
                 name: fb-user-filestore-api-secrets-{{ .Values.environmentName }}
                 key: sentry_dsn
-        volumeMounts:
-        - name: tmp-files
-          mountPath: /please_work
       volumes:
-      - emptyDir: {}
-        name: tmp-files
+        - name: tmp-files
+          emptyDir: {}
+          persistentVolumeClaim:
+            claimName: myclaim
