@@ -15,11 +15,6 @@ spec:
         tier: "frontend"
     spec:
       serviceAccountName: "formbuilder-user-filestore-{{ .Values.environmentName }}"
-      initContainers:
-      - name: "testy-fb-user-filestore-api-{{ .Values.environmentName }}"
-        volumeMounts:
-        - mountPath: /app/tmp/files
-          name: tmp-files
       containers:
       - name: "fb-user-filestore-api-{{ .Values.environmentName }}"
         image: "754256621582.dkr.ecr.eu-west-2.amazonaws.com/formbuilder/fb-user-filestore-api:{{ .Values.circleSha1 }}"
@@ -88,7 +83,7 @@ spec:
                 key: sentry_dsn
         volumeMounts:
         - name: tmp-files
-          mountPath: /app/tmp/files
+          mountPath: /please_work
       volumes:
       - emptyDir: {}
         name: tmp-files
