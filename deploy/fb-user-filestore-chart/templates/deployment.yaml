@@ -83,7 +83,7 @@ spec:
                 key: sentry_dsn
         volumeMounts:
         - name: tmp-files
-          mountPath: tmp/files
+          mountPath: /app/tmp/files
       volumes:
       - emptyDir: {}
         name: tmp-files
