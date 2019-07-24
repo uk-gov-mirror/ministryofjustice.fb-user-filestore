@@ -87,5 +87,3 @@ spec:
       volumes:
         - name: tmp-files
           emptyDir: {}
-          persistentVolumeClaim:
-            claimName: myclaim
