@@ -84,6 +84,6 @@ spec:
               secretKeyRef:
                 name: fb-user-filestore-api-secrets-{{ .Values.environmentName }}
                 key: sentry_dsn
-      volumes:
-        - name: tmp-files
-          emptyDir: {}
+  volumes:
+    - name: tmp-files
+      emptyDir: {}
