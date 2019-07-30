@@ -190,7 +190,7 @@ GEM
     timecop (0.9.1)
     tzinfo (1.2.5)
       thread_safe (~> 0.1)
-    tzinfo-data (1.2019.1)
+    tzinfo-data (1.2019.2)
       tzinfo (>= 1.0.0)
     websocket-driver (0.7.0)
       websocket-extensions (>= 0.1.0)
