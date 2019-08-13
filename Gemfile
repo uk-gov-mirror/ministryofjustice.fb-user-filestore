@@ -6,7 +6,7 @@ ruby File.read('.ruby-version').chomp
 gem 'aws-sdk-s3', '~> 1'
 gem 'bootsnap', '>= 1.1.0', require: false
 gem 'jwt'
-gem 'puma', '~> 4.0'
+gem 'puma', '~> 4.1'
 gem 'rails', '~> 5.2.3'
 gem 'sentry-raven'
 gem 'tzinfo-data'
