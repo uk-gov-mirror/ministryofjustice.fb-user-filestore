@@ -8,12 +8,10 @@ jobs:
           RAILS_ENV: test
     steps:
       - checkout
-      - run:
-          name: bundle install
-          command: 'bundle install --deployment --jobs=2 --retry 3 --without development'
+      - setup_remote_docker
       - run:
           name: test
-          command: 'bundle exec rspec'
+          command: 'make spec'
   build_and_deploy_to_test:
     working_directory: ~/circle/git/fb-user-filestore
     docker:

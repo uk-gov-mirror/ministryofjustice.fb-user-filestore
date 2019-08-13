@@ -39,8 +39,8 @@ install_build_dependencies: init
 	$(eval export PATH=${PATH}:${HOME}/.local/bin/)
 
 
-build: install_build_dependencies
-	docker build -t ${ECR_REPO_URL}:latest-${env_stub} -t ${ECR_REPO_URL}:${CIRCLE_SHA1} -f ./Dockerfile .
+build_image: install_build_dependencies
+	docker build --build-arg BUNDLE_FLAGS="--without test development" -t ${ECR_REPO_URL}:latest-${env_stub} -t ${ECR_REPO_URL}:${CIRCLE_SHA1} -f ./Dockerfile .
 
 login: init
 	@eval $(shell aws ecr get-login --no-include-email --region eu-west-2)
@@ -49,6 +49,19 @@ push: login
 	docker push ${ECR_REPO_URL}:latest-${env_stub}
 	docker push ${ECR_REPO_URL}:${CIRCLE_SHA1} #multiple tags in ECR can only be done by pushing twice
 
-build_and_push: build push
+build_and_push: build_image push
 
-.PHONY := init push build login
+.PHONY := init push build_image login build
+DOCKER_COMPOSE = docker-compose -f docker-compose.yml
+
+stop:
+	$(DOCKER_COMPOSE) down -v
+
+build: stop
+	$(DOCKER_COMPOSE) build --build-arg BUNDLE_FLAGS=''
+
+serve: stop build
+	$(DOCKER_COMPOSE) up
+
+spec: build
+	$(DOCKER_COMPOSE) run --rm app bundle exec rspec --require spec_helper
