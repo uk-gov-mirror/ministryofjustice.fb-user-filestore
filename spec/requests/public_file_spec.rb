@@ -13,4 +13,11 @@ RSpec.describe 'POST /service/:service_slug/user/:user_identifier/public-file', 
     post url, params: body.to_json, headers: headers
     expect(response.status).to eq(201)
   end
+
+  context 'without the correct payload' do
+    it 'responds with error message' do
+      post url, params: {}.to_json, headers: headers
+      expect(response.status).to eq(400)
+    end
+  end
 end
