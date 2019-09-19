@@ -80,7 +80,7 @@ class FileManager
                 :allowed_types, :days_to_live, :encrypted_user_id_and_token
 
   def uploader
-    Rails.configuration.x.storage_adapter.constantize::Uploader.new(path: path_to_file, key: key, bucket: bucket)
+    Storage::S3::Uploader.new(path: path_to_file, key: key, bucket: bucket)
   end
 
   def key

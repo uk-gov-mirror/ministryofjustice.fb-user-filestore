@@ -21,7 +21,7 @@ class DownloadsController < ApplicationController
   end
 
   def downloader
-    @downloader ||= Rails.configuration.x.storage_adapter.constantize::Downloader.new(key: key, bucket: bucket)
+    @downloader ||= Storage::S3::Downloader.new(key: key, bucket: bucket)
   end
 
   def file_fingerprint
