@@ -9,12 +9,13 @@ RSpec.describe Storage::S3::Uploader do
 
   let(:path) { file_fixture('lorem_ipsum.txt') }
   let(:key) { '28d/service-slug/upload-fingerprint' }
+  let(:bucket) { ENV['AWS_S3_BUCKET_NAME']}
 
   subject do
     described_class.new(path: path, key: key)
   end
 
-  let(:downloader) { Storage::S3::Downloader.new(key: key) }
+  let(:downloader) { Storage::S3::Downloader.new(key: key, bucket: bucket) }
 
   describe '#upload' do
     describe do

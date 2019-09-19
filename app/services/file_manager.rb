@@ -80,7 +80,7 @@ class FileManager
                 :allowed_types, :days_to_live, :encrypted_user_id_and_token
 
   def uploader
-    Rails.configuration.x.storage_adapter.constantize::Uploader.new(path: path_to_file, key: key)
+    Rails.configuration.x.storage_adapter.constantize::Uploader.new(path: path_to_file, key: key, bucket: bucket)
   end
 
   def key
@@ -97,5 +97,9 @@ class FileManager
 
   def quarantine_folder
     Rails.root.join('tmp/files/quarantine/')
+  end
+
+  def bucket
+    ENV['AWS_S3_BUCKET_NAME']
   end
 end

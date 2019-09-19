@@ -7,8 +7,8 @@ RSpec.describe Storage::S3::Downloader do
   let(:download_responses) { {} }
   let(:upload_responses) { {} }
 
-  let(:uploader) { Storage::S3::Uploader.new(path: path, key: key) }
-  subject { described_class.new(key: key) }
+  let(:uploader) { Storage::S3::Uploader.new(path: path, key: key, bucket: bucket) }
+  subject { described_class.new(key: key, bucket: bucket) }
 
   before :each do
     allow(uploader).to receive(:client).and_return(upload_client)
@@ -17,6 +17,7 @@ RSpec.describe Storage::S3::Downloader do
 
   let(:path) { file_fixture('lorem_ipsum.txt') }
   let(:key) { '28d/service-slug/download-fingerprint' }
+  let(:bucket) { ENV['AWS_S3_BUCKET_NAME'] }
 
   describe '#contents' do
     before :each do

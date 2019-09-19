@@ -1,11 +1,12 @@
 require 'rails_helper'
 
 RSpec.describe Storage::Disk::Downloader do
-  let(:uploader) { Storage::Disk::Uploader.new(path: path, key: key) }
-  subject { described_class.new(key: key) }
+  let(:uploader) { Storage::Disk::Uploader.new(path: path, key: key, bucket: bucket) }
+  subject { described_class.new(key: key, bucket: bucket) }
 
   let(:path) { file_fixture('lorem_ipsum.txt') }
   let(:key) { '28d/download-fingerprint' }
+  let(:bucket) { ENV['AWS_S3_BUCKET_NAME'] }
 
   around :each do |example|
     reset_test_directories!

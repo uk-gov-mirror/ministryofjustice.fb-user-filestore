@@ -4,9 +4,10 @@ require 'pathname'
 module Storage
   module S3
     class Uploader
-      def initialize(path:, key:)
+      def initialize(path:, key:, bucket:)
         @path = Pathname.new(path)
         @key = key
+        @bucket = bucket
       end
 
       def upload
@@ -29,7 +30,7 @@ module Storage
 
       private
 
-      attr_accessor :path, :key
+      attr_accessor :path, :key, :bucket
 
       def encrypt
         file = File.open(path, 'rb')
@@ -59,11 +60,7 @@ module Storage
       end
 
       def object
-        @object ||= Aws::S3::Object.new(bucket_name, key, client: client)
-      end
-
-      def bucket_name
-        ENV['AWS_S3_BUCKET_NAME']
+        @object ||= Aws::S3::Object.new(bucket, key, client: client)
       end
 
       def client

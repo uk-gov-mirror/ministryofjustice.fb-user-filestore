@@ -21,7 +21,7 @@ class DownloadsController < ApplicationController
   end
 
   def downloader
-    @downloader ||= Rails.configuration.x.storage_adapter.constantize::Downloader.new(key: key)
+    @downloader ||= Rails.configuration.x.storage_adapter.constantize::Downloader.new(key: key, bucket: bucket)
   end
 
   def file_fingerprint
@@ -38,6 +38,10 @@ class DownloadsController < ApplicationController
                             file_fingerprint: file_fingerprint,
                             days_to_live: days_to_live,
                             cipher_key: Digest::MD5.hexdigest(request.headers['x-encrypted-user-id-and-token'])).call
+  end
+
+  def bucket
+    ENV['AWS_S3_BUCKET_NAME']
   end
 
   def error_large_file(size)
