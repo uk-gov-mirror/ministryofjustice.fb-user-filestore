@@ -9,11 +9,16 @@ module Storage
       end
 
       def exists?
-        object.exists?
+        begin
+          client.head_object(bucket: bucket, key: key)
+          true
+        rescue Aws::S3::Errors::NotFound
+          false
+        end
       end
 
       def purge_from_source!
-        object.delete
+        client.delete_object(bucket: bucket, key: key)
       end
 
       def purge_from_destination!
@@ -30,7 +35,11 @@ module Storage
       attr_accessor :key
 
       def download
-        object.download_file(temp_file.path)
+        client.get_object(
+          response_target: temp_file.path,
+          bucket: bucket,
+          key: key
+        )
         decrypt(temp_file.path)
       end
 
@@ -43,15 +52,11 @@ module Storage
         file.close
       end
 
-      def object
-        @object ||= Aws::S3::Object.new(bucket_name, key, client: client)
-      end
-
       def temp_file
         @temp_file ||= Tempfile.new
       end
 
-      def bucket_name
+      def bucket
         ENV['AWS_S3_BUCKET_NAME']
       end
 

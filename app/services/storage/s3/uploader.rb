@@ -11,20 +11,28 @@ module Storage
 
       def upload
         encrypt
-        object.upload_file(path_to_encrypted_file)
+        File.open(path_to_encrypted_file, 'rb') do |file|
+          client.put_object(bucket: bucket, key: key, body: file)
+        end
         File.delete(path_to_encrypted_file)
       end
 
       def exists?
-        object.exists?
+        begin
+          client.head_object(bucket: bucket, key: key)
+          true
+        rescue Aws::S3::Errors::NotFound
+          false
+        end
       end
 
       def purge_from_s3!
-        object.delete
+        client.delete_object(bucket: bucket, key: key)
       end
 
       def created_at
-        object.last_modified
+        meta_data = client.head_object({bucket: bucket, key: key})
+        meta_data.last_modified
       end
 
       private
@@ -58,11 +66,7 @@ module Storage
         Rails.root.join('tmp/files/encrypted_data/')
       end
 
-      def object
-        @object ||= Aws::S3::Object.new(bucket_name, key, client: client)
-      end
-
-      def bucket_name
+      def bucket
         ENV['AWS_S3_BUCKET_NAME']
       end
 
