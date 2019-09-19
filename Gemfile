@@ -19,6 +19,7 @@ end
 
 group :test do
   gem 'timecop'
+  gem 'pry'
 end
 
 group :development do

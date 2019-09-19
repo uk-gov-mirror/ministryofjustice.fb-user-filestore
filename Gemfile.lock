@@ -227,6 +227,7 @@ DEPENDENCIES
   dotenv-rails
   guard-rspec
   jwt
+  pry
   puma (~> 4.1)
   rails (~> 6.0.0)
   rspec-rails (~> 3.8)

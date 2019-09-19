@@ -12,7 +12,7 @@ RSpec.describe Storage::S3::Uploader do
   let(:bucket) { ENV['AWS_S3_BUCKET_NAME']}
 
   subject do
-    described_class.new(path: path, key: key)
+    described_class.new(path: path, key: key, bucket: bucket)
   end
 
   let(:downloader) { Storage::S3::Downloader.new(key: key, bucket: bucket) }
