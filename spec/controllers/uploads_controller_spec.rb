@@ -1,17 +1,19 @@
 require 'rails_helper'
 
 RSpec.describe UploadsController, type: :controller do
+  let(:headers) { { 'CONTENT_TYPE' => 'application/json' } }
+  let(:file) { file_fixture('hello_world.txt').read }
+  let(:encoded_file) { Base64.strict_encode64(file) }
+  let(:json) { json_request(encoded_file) }
+  let(:s3) { Aws::S3::Client.new(stub_responses: true) }
+
   before :each do
     allow_any_instance_of(UploadsController).to receive(:verify_token!)
     allow(ServiceTokenService).to receive(:get).and_return('service-token')
+    allow(Aws::S3::Client).to receive(:new).and_return(s3)
   end
 
   describe 'POST #create' do
-    let(:headers) { { 'CONTENT_TYPE' => 'application/json' } }
-    let(:file) { file_fixture('hello_world.txt').read }
-    let(:encoded_file) { Base64.strict_encode64(file) }
-    let(:json) { json_request(encoded_file) }
-
     context 'when there are missing paramters' do
       before :each do
         disable_malware_scanner!

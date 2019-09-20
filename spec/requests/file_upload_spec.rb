@@ -8,17 +8,20 @@ RSpec.describe 'FileUpload API', type: :request do
     example.run
   end
 
+  let(:s3) { Aws::S3::Client.new(stub_responses: true) }
+
   before :each do
     disable_malware_scanner!
     allow_any_instance_of(UploadsController).to receive(:verify_token!)
     allow(ServiceTokenService).to receive(:get).with('service-slug')
-                                               .and_return('service-token')
+      .and_return('service-token')
+    allow(Aws::S3::Client).to receive(:new).and_return(s3)
   end
 
   describe 'a POST /service/{service_slug}/user/{user_id} request' do
     let(:headers) { { 'CONTENT_TYPE' => 'application/json' } }
 
-    describe 'upload with JSON payload' do
+    context 'with a correct JSON payload' do
       let(:file) { file_fixture('hello_world.txt').read }
       let(:encoded_file) { Base64.strict_encode64(file) }
       let(:json) { json_request(encoded_file) }
@@ -31,17 +34,18 @@ RSpec.describe 'FileUpload API', type: :request do
       end
 
       before do
+        s3.stub_responses(
+          :head_object,
+          'NotFound',
+          Aws::S3::Types::HeadObjectOutput.new(last_modified: now)
+        )
+        s3.stub_responses(:put_object, {})
+
         post '/service/service-slug/user/user-id', params: json.to_json, headers: headers
       end
 
       it 'has status 201' do
         expect(response).to have_http_status(201)
-      end
-
-      it 'saves the encrypted data to a local file' do
-        path_to_file = "./tmp/files/#{controller.instance_variable_get(:@file_manager).send(:key)}"
-        decoded_data = Cryptography.new(file: File.open(path_to_file).read).decrypt
-        expect(file).to eq(decoded_data)
       end
 
       it 'returns correct json response' do
@@ -58,8 +62,10 @@ RSpec.describe 'FileUpload API', type: :request do
         expect(File.exist?(path_to_file)).to be_falsey
       end
 
-      describe 'uploading the same file again' do
+      context 'when uploading the same file again' do
         before do
+          s3.stub_responses(:head_object, {}, Aws::S3::Types::HeadObjectOutput.new(last_modified: now) )
+
           post '/service/service-slug/user/user-id', params: json.to_json, headers: headers
         end
 
@@ -78,29 +84,34 @@ RSpec.describe 'FileUpload API', type: :request do
       end
     end
 
-    describe 'file exceeds max file size' do
+    context 'when file exceeds max file size' do
       let(:file) { file_fixture('sample.txt').read }
       let(:encoded_file) { Base64.strict_encode64(file) }
       let(:json) { json_request(encoded_file) }
 
       before do
+        s3.stub_responses(
+          :head_object,
+          'NotFound',
+          Aws::S3::Types::HeadObjectOutput.new(last_modified: Time.now.utc)
+        )
+        s3.stub_responses(:put_object, {})
+
         post '/service/service-slug/user/user-id', params: json.to_json, headers: headers
       end
 
-      context 'returns error if file size is too large' do
-        it 'has status 400' do
-          expect(response).to have_http_status(400)
-        end
+      it 'has status 400' do
+        expect(response).to have_http_status(400)
+      end
 
-        it 'returns JSON with invalid.too-large content' do
-          result = JSON.parse(response.body)
-          expect(result['name']).to eq('invalid.too-large')
-        end
+      it 'returns JSON with invalid.too-large content' do
+        result = JSON.parse(response.body)
+        expect(result['name']).to eq('invalid.too-large')
       end
     end
 
-    describe 'Mime type of file is not supported' do
-      describe 'bmp format' do
+    context 'When mime type of file is not supported' do
+      context 'when file is bmp format' do
         let(:file) { file_fixture('bitmap.bmp').read }
         let(:encoded_file) { Base64.strict_encode64(file) }
         let(:json) { json_request(encoded_file) }
@@ -119,7 +130,7 @@ RSpec.describe 'FileUpload API', type: :request do
         end
       end
 
-      describe 'html format' do
+      context 'when file is html format' do
         let(:file) { file_fixture('hello.html').read }
         let(:encoded_file) { Base64.strict_encode64(file) }
         let(:json) { json_request(encoded_file) }
@@ -139,7 +150,7 @@ RSpec.describe 'FileUpload API', type: :request do
       end
     end
 
-    describe 'file could not be saved to quarantine' do
+    context 'when file cannot be saved to quarantine' do
       let(:file) { file_fixture('hello_world.txt').read }
       let(:encoded_file) { Base64.strict_encode64(file) }
       let(:json) { json_request(encoded_file) }
@@ -158,7 +169,7 @@ RSpec.describe 'FileUpload API', type: :request do
       end
     end
 
-    describe 'with custom expires option set' do
+    context 'with custom expires option set' do
       let(:file) { file_fixture('hello_world.txt').read }
       let(:encoded_file) { Base64.strict_encode64(file) }
       let(:json) { json_request(encoded_file, expires: 7) }
@@ -171,17 +182,18 @@ RSpec.describe 'FileUpload API', type: :request do
       end
 
       before do
+        s3.stub_responses(
+          :head_object,
+          'NotFound',
+          Aws::S3::Types::HeadObjectOutput.new(last_modified: Time.now.utc)
+        )
+        s3.stub_responses(:put_object, {})
+
         post '/service/service-slug/user/user-id', params: json.to_json, headers: headers
       end
 
       it 'has status 201' do
         expect(response).to have_http_status(201)
-      end
-
-      it 'saves the decoded data to a local file' do
-        path_to_file = './tmp/files/7d/dacddf0604d026f14331715e6841f00af56d85b8070e7b60e4311393408ac4d3'
-        decoded_data = Cryptography.new(file: File.open(path_to_file).read).decrypt
-        expect(file).to eq(decoded_data)
       end
 
       it 'returns correct json response' do

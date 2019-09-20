@@ -7,27 +7,15 @@ RSpec.describe FileManager do
   let(:service_token) { SecureRandom.hex }
   let(:service_slug) { 'service-slug' }
   let(:encrypted_user_id_and_token) { SecureRandom.hex(16) }
+  let(:s3) { Aws::S3::Client.new(stub_responses: true) }
 
-  subject do
-    described_class.new(encoded_file: encoded_file,
-                        user_id: user_id,
-                        service_slug: service_slug,
-                        encrypted_user_id_and_token: encrypted_user_id_and_token)
-  end
-
-  describe '#key' do
-    before :each do
-      allow(ServiceTokenService).to receive(:get).with('service-slug')
-                                                 .and_return('service-token')
-    end
-
-    it 'expect file to be saved to disk' do
-      subject.save_to_disk
-      subject.upload
-
-      encrypted_data = Cryptography.new(file: File.open(file).read).encrypt
-      expect(File.open("tmp/files/#{subject.send(:key)}").read).to eql(encrypted_data)
-    end
+  let(:subject) do
+    described_class.new(
+      encoded_file: encoded_file,
+      user_id: user_id,
+      service_slug: service_slug,
+      encrypted_user_id_and_token: encrypted_user_id_and_token
+    )
   end
 
   describe '#save_to_disk' do

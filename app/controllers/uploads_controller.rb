@@ -4,15 +4,17 @@ class UploadsController < ApplicationController
   before_action :check_upload_params, only: [:create]
 
   def create
-    @file_manager = FileManager.new(encoded_file: params[:file],
-                                    user_id: params[:user_id],
-                                    service_slug: params[:service_slug],
-                                    encrypted_user_id_and_token: params[:encrypted_user_id_and_token],
-                                    options: {
-                                      max_size: params[:policy][:max_size],
-                                      allowed_types: params[:policy][:allowed_types],
-                                      days_to_live: params[:policy][:expires]
-                                    })
+    @file_manager = FileManager.new(
+      encoded_file: params[:file],
+      user_id: params[:user_id],
+      service_slug: params[:service_slug],
+      encrypted_user_id_and_token: params[:encrypted_user_id_and_token],
+      options: {
+        max_size: params[:policy][:max_size],
+        allowed_types: params[:policy][:allowed_types],
+        days_to_live: params[:policy][:expires]
+      }
+    )
 
     @file_manager.save_to_disk
 
