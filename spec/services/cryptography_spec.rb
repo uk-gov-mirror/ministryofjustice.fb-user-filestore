@@ -1,10 +1,18 @@
 require 'rails_helper'
 
 RSpec.describe Cryptography do
+  let(:encryption_key) { ENV['ENCRYPTION_KEY'] }
+  let(:encryption_iv) { ENV['ENCRYPTION_IV'] }
+  let(:cryptography) do
+    Cryptography.new(
+      encryption_key: encryption_key,
+      encryption_iv: encryption_iv
+    )
+  end
+
   describe '#encrypt' do
     let(:file) { file_fixture('lorem_ipsum.txt').read }
-    let(:cryptography) { Cryptography.new(file: file) }
-    let(:encrypted_data) { cryptography.encrypt }
+    let(:encrypted_data) { cryptography.encrypt(file: file) }
     let(:data) { 'ce030d6aac29d4a5a8b03f7428ff4626' }
 
     it 'changes the file content using AES-256 encryption' do
@@ -17,15 +25,14 @@ RSpec.describe Cryptography do
     let(:plain_text_file) { file_fixture('lorem_ipsum.txt').read }
 
     before do
-      encrypted_file = Cryptography.new(file: plain_text_file).encrypt
+      encrypted_file = cryptography.encrypt(file: plain_text_file)
       file = File.open('spec/fixtures/files/encrypted_file', 'wb')
       file.write(encrypted_file)
       file.close
     end
 
     let(:file) { file_fixture('encrypted_file').read }
-    let(:cryptography) { Cryptography.new(file: file) }
-    let(:decrypted_data) { cryptography.decrypt }
+    let(:decrypted_data) { cryptography.decrypt(file: file) }
 
     it 'converts encrypted data back to plain text' do
       expect(decrypted_data).to eq(plain_text_file)
