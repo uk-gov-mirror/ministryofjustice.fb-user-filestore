@@ -21,7 +21,11 @@ class DownloadsController < ApplicationController
   end
 
   def downloader
-    @downloader ||= Storage::S3::Downloader.new(key: key)
+    @downloader ||= Storage::S3::Downloader.new(key: key, bucket: bucket)
+  end
+
+  def bucket
+    ENV['AWS_S3_BUCKET_NAME']
   end
 
   def file_fingerprint

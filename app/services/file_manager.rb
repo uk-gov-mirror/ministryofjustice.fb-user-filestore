@@ -5,11 +5,13 @@ class FileManager
   attr_reader :file
 
   def initialize(encoded_file:, user_id:, service_slug:,
-    encrypted_user_id_and_token:, options: {})
+    encrypted_user_id_and_token:, bucket:, options: {}
+  )
     @encoded_file = encoded_file
     @user_id = user_id
     @service_slug = service_slug
     @encrypted_user_id_and_token = encrypted_user_id_and_token
+    @bucket = bucket
     @max_size = options[:max_size] ? options[:max_size].to_i : nil
     @allowed_types = options.fetch(:allowed_types, [])
     @days_to_live = options.fetch(:days_to_live, 28).to_i
@@ -76,11 +78,11 @@ class FileManager
 
   private
 
-  attr_accessor :encoded_file, :user_id, :service_slug, :max_size,
+  attr_accessor :encoded_file, :user_id, :service_slug, :max_size, :bucket,
                 :allowed_types, :days_to_live, :encrypted_user_id_and_token
 
   def uploader
-    Storage::S3::Uploader.new(path: path_to_file, key: key)
+    Storage::S3::Uploader.new(path: path_to_file, key: key, bucket: bucket)
   end
 
   def key

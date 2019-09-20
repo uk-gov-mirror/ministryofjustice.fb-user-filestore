@@ -9,6 +9,7 @@ class UploadsController < ApplicationController
       user_id: params[:user_id],
       service_slug: params[:service_slug],
       encrypted_user_id_and_token: params[:encrypted_user_id_and_token],
+      bucket: bucket,
       options: {
         max_size: params[:policy][:max_size],
         allowed_types: params[:policy][:allowed_types],
@@ -116,5 +117,9 @@ class UploadsController < ApplicationController
   def error_virus_error
     render json: { code: 400,
                    name: 'invalid.virus' }, status: 400
+  end
+
+  def bucket
+    ENV['AWS_S3_BUCKET_NAME']
   end
 end

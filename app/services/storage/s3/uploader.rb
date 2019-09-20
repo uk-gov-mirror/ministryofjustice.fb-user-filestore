@@ -4,9 +4,10 @@ require 'pathname'
 module Storage
   module S3
     class Uploader
-      def initialize(path:, key:)
+      def initialize(path:, key:, bucket:)
         @path = Pathname.new(path)
         @key = key
+        @bucket = bucket
       end
 
       def upload
@@ -37,7 +38,7 @@ module Storage
 
       private
 
-      attr_accessor :path, :key
+      attr_accessor :path, :key, :bucket
 
       def encrypt
         file = File.open(path, 'rb')
@@ -64,10 +65,6 @@ module Storage
 
       def encrypted_folder
         Rails.root.join('tmp/files/encrypted_data/')
-      end
-
-      def bucket
-        ENV['AWS_S3_BUCKET_NAME']
       end
 
       def client
