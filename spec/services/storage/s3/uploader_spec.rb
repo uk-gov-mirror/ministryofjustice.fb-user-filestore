@@ -2,11 +2,10 @@ require 'rails_helper'
 
 RSpec.describe Storage::S3::Uploader do
   let(:s3) { Aws::S3::Client.new(stub_responses: true) }
-  let(:path) { file_fixture('lorem_ipsum.txt') }
   let(:key) { '28d/service-slug/upload-fingerprint' }
   let(:bucket) { ENV['AWS_S3_BUCKET_NAME'] }
   let(:downloader) { Storage::S3::Downloader.new(key: key, bucket: bucket) }
-  let(:subject) { described_class.new(path: path, key: key, bucket: bucket) }
+  let(:subject) { described_class.new(key: key, bucket: bucket) }
 
   before :each do
     allow(Aws::S3::Client).to receive(:new).and_return(s3)
@@ -36,18 +35,17 @@ RSpec.describe Storage::S3::Uploader do
 
 
   describe '#upload' do
+    let(:file_data) do
+      File.read(file_fixture('lorem_ipsum.txt'))
+    end
+
     before do
       s3.stub_responses(:put_object, {})
     end
 
     it 'uploads file to s3' do
-      expect(s3).to receive(:put_object).once
-      subject.upload
-    end
-
-    it 'deletes temporary files' do
-      subject.upload
-      expect(File.exist?(subject.send(:path_to_encrypted_file))).to be_falsey
+      expect(s3).to receive(:put_object).with(bucket: bucket, key: key, body: file_data)
+      subject.upload(file_data: file_data)
     end
   end
 

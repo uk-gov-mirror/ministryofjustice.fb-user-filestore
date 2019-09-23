@@ -8,35 +8,25 @@ RSpec.describe Storage::S3::Downloader do
   let(:path) { file_fixture('lorem_ipsum.txt') }
   let(:key) { '28d/service-slug/download-fingerprint' }
   let(:bucket) { ENV['AWS_S3_BUCKET_NAME'] }
-  let(:uploader) { Storage::S3::Uploader.new(path: path, key: key, bucket: bucket) }
   let(:subject) { described_class.new(key: key, bucket: bucket) }
 
   before :each do
-    allow(uploader).to receive(:client).and_return(upload_client)
     allow(subject).to receive(:client).and_return(download_client)
   end
 
   describe '#contents' do
-    before :each do
-      uploader.upload
-    end
-
     describe do
       let(:download_responses) do
         {
           head_object: [{ content_length: 150 }],
-          get_object: [{ body: "ce030d6aac29d4a5a8b03f7428ff4626" }]
+          get_object: [{ body: "ce030d6aac29d4a5a8b03f7428ff4626" }],
+          delete_object: {}
         }
       end
 
       it 'contains correct contents' do
         expect(subject.contents).to eql("lorem ipsum\n")
       end
-    end
-
-    after :each do
-      subject.purge_from_source!
-      subject.purge_from_destination!
     end
   end
 end

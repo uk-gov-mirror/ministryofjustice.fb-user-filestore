@@ -4,18 +4,13 @@ require 'pathname'
 module Storage
   module S3
     class Uploader
-      def initialize(path:, key:, bucket:)
-        @path = Pathname.new(path)
+      def initialize(key:, bucket:)
         @key = key
         @bucket = bucket
       end
 
-      def upload
-        encrypt
-        File.open(path_to_encrypted_file, 'rb') do |file|
-          client.put_object(bucket: bucket, key: key, body: file)
-        end
-        File.delete(path_to_encrypted_file)
+      def upload(file_data:)
+        client.put_object(bucket: bucket, key: key, body: file_data)
       end
 
       def exists?
@@ -32,59 +27,16 @@ module Storage
       end
 
       def created_at
-        meta_data = client.head_object({bucket: bucket, key: key})
+        meta_data = client.head_object(bucket: bucket, key: key)
         meta_data.last_modified
       end
 
       private
 
-      attr_accessor :path, :key, :bucket
-
-      def encrypt
-        file = File.open(path, 'rb')
-        data = file.read
-        file.close
-        result = Cryptography.new(
-          encryption_key: encryption_key,
-          encryption_iv: encryption_iv
-        ).encrypt(file: data)
-
-        save_encrypted_to_disk(result)
-      end
-
-      def save_encrypted_to_disk(data)
-        ensure_encrypted_folder_exists
-        encrypted_file = File.open(path_to_encrypted_file, 'wb')
-        encrypted_file.write(data)
-        encrypted_file.close
-      end
-
-      def path_to_encrypted_file
-        @path_to_encrypted_file ||= Rails.root.join('tmp/files/encrypted_data/', random_filename)
-      end
-
-      def ensure_encrypted_folder_exists
-        FileUtils.mkdir_p(encrypted_folder)
-      end
-
-      def encrypted_folder
-        Rails.root.join('tmp/files/encrypted_data/')
-      end
+      attr_accessor :key, :bucket
 
       def client
         @client ||= Aws::S3::Client.new
-      end
-
-      def random_filename
-        @random_filename ||= SecureRandom.hex
-      end
-
-      def encryption_key
-        ENV['ENCRYPTION_KEY']
-      end
-
-      def encryption_iv
-        ENV['ENCRYPTION_IV']
       end
     end
   end

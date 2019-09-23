@@ -49,7 +49,10 @@ class FileManager
   end
 
   def upload
-    uploader.upload
+    file_data = decode_file_data(encoded_file)
+    encrypted_file_data = encrypt_file_data(file_data)
+
+    uploader.upload(file_data: encrypted_file_data)
   end
 
   def file_fingerprint
@@ -82,7 +85,26 @@ class FileManager
                 :allowed_types, :days_to_live, :encrypted_user_id_and_token
 
   def uploader
-    Storage::S3::Uploader.new(path: path_to_file, key: key, bucket: bucket)
+    Storage::S3::Uploader.new(key: key, bucket: bucket)
+  end
+
+  def decode_file_data(data)
+    Base64.strict_decode64(data)
+  end
+
+  def encrypt_file_data(data)
+    Cryptography.new(
+      encryption_key: encryption_key,
+      encryption_iv: encryption_iv
+    ).encrypt(file: data)
+  end
+
+  def encryption_key
+    ENV['ENCRYPTION_KEY']
+  end
+
+  def encryption_iv
+    ENV['ENCRYPTION_IV']
   end
 
   def key
