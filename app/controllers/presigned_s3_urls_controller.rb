@@ -47,7 +47,7 @@ class PresignedS3UrlsController < ApplicationController
       user_id: params[:user_id],
       service_slug: params[:service_slug],
       file_fingerprint: file_fingerprint,
-      days_to_live: 1,
+      days_to_live: days_to_live,
       cipher_key: cipher_key
     ).call
   end
@@ -60,8 +60,12 @@ class PresignedS3UrlsController < ApplicationController
     ENV.fetch('AWS_S3_EXTERNAL_BUCKET_NAME')
   end
 
+  def days_to_live
+    params[:fingerprint_with_prefix].split('-').first.scan(/\d/).join.to_i
+  end
+
   def file_fingerprint
-    params[:fingerprint_with_prefix]
+    params[:fingerprint_with_prefix].split('-').last
   end
 
   def cipher_key
