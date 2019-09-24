@@ -31,6 +31,11 @@ module Storage
         meta_data.last_modified
       end
 
+      def s3_url
+        signer = Aws::S3::Presigner.new(client: client)
+        signer.presigned_url(:get_object, bucket: bucket, key: key)
+      end
+
       private
 
       attr_accessor :key, :bucket, :s3_config
