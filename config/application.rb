@@ -31,5 +31,14 @@ module FbUserFilestore
     # Middleware like session, flash, cookies can be added back manually.
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
+
+    config.x.s3_internal_bucket_config = {
+      access_key_id: ENV.fetch('AWS_ACCESS_KEY_ID'),
+      secret_access_key: ENV.fetch('AWS_SECRET_ACCESS_KEY')
+    }
+    config.x.s3_external_bucket_config = {
+      access_key_id: ENV.fetch('AWS_S3_EXTERNAL_BUCKET_ACCESS_KEY_ID'),
+      secret_access_key: ENV.fetch('AWS_S3_EXTERNAL_BUCKET_SECRET_ACCESS_KEY')
+    }
   end
 end

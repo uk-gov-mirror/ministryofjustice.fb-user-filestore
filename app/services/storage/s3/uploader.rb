@@ -1,12 +1,12 @@
 require 'aws-sdk-s3'
-require 'pathname'
 
 module Storage
   module S3
     class Uploader
-      def initialize(key:, bucket:)
+      def initialize(key:, bucket:, s3_config: default_s3_config)
         @key = key
         @bucket = bucket
+        @s3_config = s3_config
       end
 
       def upload(file_data:)
@@ -33,10 +33,14 @@ module Storage
 
       private
 
-      attr_accessor :key, :bucket
+      attr_accessor :key, :bucket, :s3_config
+
+      def default_s3_config
+        Rails.configuration.x.s3_internal_bucket_config
+      end
 
       def client
-        @client ||= Aws::S3::Client.new
+        @client ||= Aws::S3::Client.new(s3_config)
       end
     end
   end
