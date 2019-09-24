@@ -22,12 +22,6 @@ RSpec.describe 'GET /service/{service_slug}/user/{user_id}/{fingerprint}', type:
   end
 
   context 'when file exists' do
-    around :each do |example|
-      FileUtils.cp(file_fixture('encrypted_file'), Rails.root.join('tmp/files/28d/6ac6a2fe8dc936178d165c6ddffa39737b7fbb5dfdf17bbf81d2ac7418820a46'))
-      example.run
-      FileUtils.rm(Rails.root.join('tmp/files/28d/6ac6a2fe8dc936178d165c6ddffa39737b7fbb5dfdf17bbf81d2ac7418820a46'))
-    end
-
     before do
       s3.stub_responses(:head_object, {})
       s3.stub_responses(:get_object, { body: file_fixture('encrypted_file').read })
