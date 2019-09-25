@@ -11,7 +11,7 @@ class PresignedS3UrlsController < ApplicationController
     uploader.upload(file_data: reencrypted_file_data)
 
     payload = {
-      url: s3_url,
+      url: uploader.s3_url,
       encryption_key: Base64.strict_encode64(encryption_key),
       encryption_iv: Base64.strict_encode64(encryption_iv)
     }
@@ -20,11 +20,6 @@ class PresignedS3UrlsController < ApplicationController
   end
 
   private
-
-  def s3_url
-    signer = Aws::S3::Presigner.new
-    signer.presigned_url(:get_object, bucket: public_bucket, key: key)
-  end
 
   def ssl
     @ssl ||= OpenSSL::Cipher.new 'AES-256-CBC'
@@ -38,8 +33,12 @@ class PresignedS3UrlsController < ApplicationController
     @uploader ||= Storage::S3::Uploader.new(
       key: key,
       bucket: public_bucket,
-      s3_config: Rails.configuration.x.s3_external_bucket_config
+      s3_config: external_bucket_s3_config
     )
+  end
+
+  def external_bucket_s3_config
+    Rails.configuration.x.s3_external_bucket_config
   end
 
   def key
