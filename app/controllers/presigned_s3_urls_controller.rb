@@ -1,7 +1,7 @@
 class PresignedS3UrlsController < ApplicationController
   def create
-    encryption_key = ssl.random_key
-    encryption_iv = ssl.random_iv
+    encryption_key = SecureRandom.alphanumeric(32)
+    encryption_iv = SecureRandom.alphanumeric(16)
 
     reencrypted_file_data = Cryptography.new(
       encryption_key: encryption_key,
@@ -20,10 +20,6 @@ class PresignedS3UrlsController < ApplicationController
   end
 
   private
-
-  def ssl
-    @ssl ||= OpenSSL::Cipher.new 'AES-256-CBC'
-  end
 
   def downloader
     @downloader ||= Storage::S3::Downloader.new(key: key, bucket: bucket)
