@@ -31,7 +31,7 @@ class PresignedS3UrlsController < ApplicationController
 
   def uploader
     @uploader ||= Storage::S3::Uploader.new(
-      key: key,
+      key: SecureRandom.uuid,
       bucket: public_bucket,
       s3_config: external_bucket_s3_config
     )
