@@ -34,12 +34,9 @@ spec:
         # non-secret env vars
         # defined in config_map.yaml
         resources:
-          limits:
-            cpu: 300m
-            memory: 1Gi
           requests:
-            cpu: 200m
-            memory: 512Mi
+            cpu: 10m
+            memory: 128Mi
         envFrom:
           - configMapRef:
               name: fb-user-filestore-api-env-{{ .Values.environmentName }}
