@@ -1,4 +1,4 @@
-FROM ruby:2.6.4-alpine3.9
+FROM ruby:2.6.5-alpine3.9
 
 RUN apk add --update --no-cache --virtual .build-deps build-base libgcrypt-dev \
  libxml2-dev libxslt-dev nodejs postgresql-contrib postgresql-dev
