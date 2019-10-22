@@ -105,7 +105,7 @@ class UploadsController < ApplicationController
 
   def error_unsupported_file_type(type)
     render json: { code: 400,
-                   name: 'invalid.type',
+                   name: 'accept',
                    type: type }, status: 400
   end
 
