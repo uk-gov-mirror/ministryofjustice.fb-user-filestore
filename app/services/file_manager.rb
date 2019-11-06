@@ -2,10 +2,10 @@ require 'securerandom'
 require 'digest'
 
 class FileManager
-  attr_reader :file
+  attr_reader :file, :enable_malware_scanner
 
   def initialize(encoded_file:, user_id:, service_slug:,
-    encrypted_user_id_and_token:, bucket:, options: {}
+    encrypted_user_id_and_token:, bucket:, enable_malware_scanner:, options: {}
   )
     @encoded_file = encoded_file
     @user_id = user_id
@@ -15,6 +15,8 @@ class FileManager
     @max_size = options[:max_size] ? options[:max_size].to_i : nil
     @allowed_types = options.fetch(:allowed_types, [])
     @days_to_live = options.fetch(:days_to_live, 28).to_i
+    @days_to_live = options.fetch(:days_to_live, 28).to_i
+    @enable_malware_scanner = enable_malware_scanner
   end
 
   def save_to_disk
@@ -68,7 +70,11 @@ class FileManager
   end
 
   def has_virus?
-    MalwareScanner.call(path_to_file)
+    if enable_malware_scanner
+      MalwareScanner.call(path_to_file)
+    else
+      false
+    end
   end
 
   def delete_file

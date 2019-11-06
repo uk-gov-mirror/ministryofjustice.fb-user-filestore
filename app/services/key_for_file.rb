@@ -36,7 +36,11 @@ class KeyForFile
   end
 
   def service_token
-    ServiceTokenService.get(service_slug)
+    if Rails.configuration.enable_jwt
+      ServiceTokenService.get(service_slug)
+    else
+      'fake-service-token'
+    end
   end
 
   def key_encryption_iv

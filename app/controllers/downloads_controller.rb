@@ -8,8 +8,8 @@ class DownloadsController < ApplicationController
     else
       render json: { code: 404, name: 'not-found' }, status: 404
     end
-  rescue StandardError
-    return error_download_server_error
+  # rescue StandardError
+  #   return error_download_server_error
   end
 
   private

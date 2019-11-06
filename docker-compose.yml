@@ -9,3 +9,6 @@ services:
       - '3000:3000'
     environment:
       SECRET_KEY_BASE: 'super_secret'
+      RAILS_ENV: 'development'
+      ACCESS_KEY_ID: ''
+      SECRET_ACCESS_KEY: ''

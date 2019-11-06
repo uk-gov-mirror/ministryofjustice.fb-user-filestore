@@ -40,5 +40,7 @@ module FbUserFilestore
       access_key_id: ENV.fetch('AWS_S3_EXTERNAL_BUCKET_ACCESS_KEY_ID'),
       secret_access_key: ENV.fetch('AWS_S3_EXTERNAL_BUCKET_SECRET_ACCESS_KEY')
     }
+
+    config.enable_malware_scanner = true
   end
 end

@@ -10,10 +10,11 @@ class UploadsController < ApplicationController
       service_slug: params[:service_slug],
       encrypted_user_id_and_token: params[:encrypted_user_id_and_token],
       bucket: bucket,
+      enable_malware_scanner: Rails.configuration.enable_malware_scanner,
       options: {
         max_size: params[:policy][:max_size],
         allowed_types: params[:policy][:allowed_types],
-        days_to_live: params[:policy][:expires]
+        days_to_live: params[:policy][:expires],
       }
     )
 
@@ -53,9 +54,9 @@ class UploadsController < ApplicationController
 
       render json: hash, status: 201
     end
-  rescue StandardError => e
-    Raven.capture_exception(e)
-    return error_upload_server_error
+  # rescue StandardError => e
+  #   Raven.capture_exception(e)
+  #   return error_upload_server_error
   ensure
     @file_manager.delete_file if @file_manager
   end

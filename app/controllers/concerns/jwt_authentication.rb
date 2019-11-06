@@ -3,7 +3,7 @@ module Concerns
     extend ActiveSupport::Concern
 
     included do
-      before_action :verify_token!
+      before_action :verify_token!, if: -> { Rails.configuration.enable_jwt }
 
       if ancestors.include?(Concerns::ErrorHandling)
         rescue_from Exceptions::TokenNotPresentError do |e|

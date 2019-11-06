@@ -51,4 +51,18 @@ Rails.application.configure do
   # Use an evented file watcher to asynchronously detect changes in source code,
   # routes, locales, etc. This feature depends on the listen gem.
   # config.file_watcher = ActiveSupport::EventedFileUpdateChecker
+
+  config.x.s3_internal_bucket_config = {
+    access_key_id: ENV.fetch('AWS_ACCESS_KEY_ID', ''),
+    secret_access_key: ENV.fetch('AWS_SECRET_ACCESS_KEY', ''),
+    stub_responses: true
+  }
+  config.x.s3_external_bucket_config = {
+    access_key_id: ENV.fetch('AWS_S3_EXTERNAL_BUCKET_ACCESS_KEY_ID', ''),
+    secret_access_key: ENV.fetch('AWS_S3_EXTERNAL_BUCKET_SECRET_ACCESS_KEY', ''),
+    stub_responses: true
+  }
+
+  config.enable_jwt = false
+  config.enable_malware_scanner = false
 end
