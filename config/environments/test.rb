@@ -44,4 +44,6 @@ Rails.application.configure do
       secret_access_key: ENV.fetch('AWS_S3_EXTERNAL_BUCKET_SECRET_ACCESS_KEY'),
       stub_responses: true
     }
+
+  config.hosts.clear
 end
