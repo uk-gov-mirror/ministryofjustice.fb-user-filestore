@@ -45,5 +45,5 @@ Rails.application.configure do
       stub_responses: true
     }
 
-  config.hosts << "filestore-app"
+  config.hosts.clear
 end
