@@ -9,3 +9,4 @@ services:
       - '3000:3000'
     environment:
       SECRET_KEY_BASE: 'super_secret'
+      MAX_IAT_SKEW_SECONDS: "300"
