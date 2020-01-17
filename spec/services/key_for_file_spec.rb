@@ -9,9 +9,12 @@ RSpec.describe KeyForFile do
                         cipher_key: '12345678901234567890123456789012')
   end
 
+  let(:fake_service) { double('service') }
+
   before :each do
-    allow(ServiceTokenService).to receive(:get).with('service-slug')
-                                               .and_return('service-token')
+    allow(ServiceTokenService).to receive(:new).with(service_slug: 'service-slug')
+                                               .and_return(fake_service)
+    allow(fake_service).to receive(:get).and_return('service-token')
   end
 
   it 'returns correct key' do

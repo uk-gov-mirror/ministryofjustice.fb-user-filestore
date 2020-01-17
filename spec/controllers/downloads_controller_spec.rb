@@ -1,10 +1,6 @@
 require 'rails_helper'
 
 RSpec.describe DownloadsController, type: :controller do
-  before :each do
-    allow(ServiceTokenService).to receive(:get).and_return('service-token')
-  end
-
   describe 'GET #show' do
     let(:headers) { { 'CONTENT_TYPE' => 'application/json' } }
     let(:payload_query_string) do

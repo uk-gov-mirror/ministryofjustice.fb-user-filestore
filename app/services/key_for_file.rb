@@ -36,7 +36,8 @@ class KeyForFile
   end
 
   def service_token
-    ServiceTokenService.get(service_slug)
+    service = ServiceTokenService.new(service_slug: service_slug)
+    service.get
   end
 
   def key_encryption_iv

@@ -1,19 +1,17 @@
 require 'rails_helper'
 
 RSpec.describe ServiceTokenService do
-  describe '::get' do
-    let(:fake_client) { double('fake_client') }
+  let(:service_slug) { 'service-slug' }
+  let(:fake_client) { double('fake_client') }
 
-    it 'delegate call to client' do
-      allow(ServiceTokenService).to receive(:client).and_return(fake_client)
-      expect(fake_client).to receive(:get).with('service-slug')
-      described_class.get('service-slug')
-    end
-  end
+  subject { described_class.new(service_slug: service_slug) }
 
-  describe '::client' do
-    it 'returns a ServiceTokenCacheClient' do
-      expect(described_class.client).to be_a(Adapters::ServiceTokenCacheClient)
+  describe '#get' do
+    it 'delegates call to client' do
+      allow(Adapters::ServiceTokenCacheClient).to receive(:new).and_return(fake_client)
+      expect(fake_client).to receive(:get).with(service_slug).and_return(service_slug)
+
+      expect(subject.get).to eql(service_slug)
     end
   end
 end

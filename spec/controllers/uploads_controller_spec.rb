@@ -6,10 +6,12 @@ RSpec.describe UploadsController, type: :controller do
   let(:encoded_file) { Base64.strict_encode64(file) }
   let(:json) { json_request(encoded_file) }
   let(:s3) { Aws::S3::Client.new(stub_responses: true) }
+  let(:fake_service) { ServiceTokenService.new(service_slug: 'service-slug') }
 
   before :each do
-    allow_any_instance_of(UploadsController).to receive(:verify_token!)
-    allow(ServiceTokenService).to receive(:get).and_return('service-token')
+    allow_any_instance_of(UploadsController).to receive(:verify_token!).and_return(true)
+    allow(ServiceTokenService).to receive(:new).and_return(fake_service)
+    allow(fake_service).to receive(:get).and_return('service-token')
     allow(Aws::S3::Client).to receive(:new).and_return(s3)
   end
 

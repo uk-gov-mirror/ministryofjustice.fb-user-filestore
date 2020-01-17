@@ -7,11 +7,13 @@ RUN apk add clamav-daemon
 
 WORKDIR /usr/src/app
 
-COPY . .
+COPY Gemfile Gemfile.lock .ruby-version ./
 
 ARG BUNDLE_FLAGS
 RUN gem install bundler
 RUN bundle install --jobs 4 --retry 5 ${BUNDLE_FLAGS}
+
+COPY . .
 
 RUN apk del .build-deps
 RUN addgroup -S appgroup && adduser -S 1001 -G appgroup

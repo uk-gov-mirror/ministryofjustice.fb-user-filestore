@@ -9,6 +9,7 @@ RSpec.describe 'GET /service/{service_slug}/user/{user_id}/{fingerprint}', type:
   let(:do_get!) do
     get "/service/service-slug/user/user-id/28d-fingerprint", headers: headers
   end
+  let(:fake_service) { ServiceTokenService.new(service_slug: 'service-slug') }
 
   around :each do |example|
     reset_test_directories!
@@ -16,8 +17,8 @@ RSpec.describe 'GET /service/{service_slug}/user/{user_id}/{fingerprint}', type:
   end
 
   before :each do
-    allow(ServiceTokenService).to receive(:get).with('service-slug')
-      .and_return('service-token')
+    allow(ServiceTokenService).to receive(:new).with(service_slug: 'service-slug').and_return(fake_service)
+    allow(fake_service).to receive(:get).and_return('service-token')
     allow(Aws::S3::Client).to receive(:new).and_return(s3)
   end
 
