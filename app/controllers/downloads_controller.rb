@@ -1,4 +1,6 @@
 class DownloadsController < ApplicationController
+  include Concerns::JWTAuthentication
+
   before_action :check_download_params
 
   def show
