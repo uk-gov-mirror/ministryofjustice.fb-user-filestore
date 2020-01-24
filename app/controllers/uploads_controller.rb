@@ -71,6 +71,10 @@ class UploadsController < ApplicationController
       return render json: { code: 400, name: 'invalid.user-id-missing' }, status: 400
     end
 
+    unless @jwt_payload['sub'] == params[:user_id]
+      raise Concerns::JWTAuthentication::SubjectMismatchError
+    end
+
     if params[:encrypted_user_id_and_token].blank?
       return render json: { code: 403, name: 'forbidden.user-id-token-missing' }, status: 403
     end
