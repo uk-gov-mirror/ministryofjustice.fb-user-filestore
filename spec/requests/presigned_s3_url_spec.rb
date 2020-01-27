@@ -1,6 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe 'POST /presigned-s3-url', type: :request do
+  include KeyHelpers
+
   let(:service_slug) { 'my-service' }
   let(:user_identifier) { SecureRandom::uuid }
   let(:fingerprint_with_prefix) do
@@ -16,8 +18,7 @@ RSpec.describe 'POST /presigned-s3-url', type: :request do
   let(:s3) { Aws::S3::Client.new(stub_responses: true) }
 
   before do
-    allow_any_instance_of(Adapters::ServiceTokenCacheClient).to receive(:get)
-      .and_return('ServiceToken')
+    allow_any_instance_of(Adapters::ServiceTokenCacheClient).to receive(:public_key_for).and_return(public_key)
     allow(Aws::S3::Client).to receive(:new).and_return(s3)
     s3.stub_responses(:get_object, { body: file_fixture('encrypted_file').read })
     s3.stub_responses(:put_object, {})
