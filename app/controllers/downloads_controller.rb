@@ -20,6 +20,10 @@ class DownloadsController < ApplicationController
     if request.headers['x-encrypted-user-id-and-token'].blank?
       return render json: { code: 403, name: 'forbidden.user-id-token-missing' }, status: 403
     end
+
+    unless @jwt_payload['sub'] == params[:user_id]
+      raise Concerns::JWTAuthentication::SubjectMismatchError
+    end
   end
 
   def downloader
