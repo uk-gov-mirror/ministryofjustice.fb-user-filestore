@@ -27,7 +27,7 @@ RSpec.describe DownloadsController, type: :controller do
       request.headers.merge!(headers)
     end
 
-    context 'when there are missing paramters' do
+    context 'sad paths' do
       context 'missing payload' do
         it 'returns error' do
           url_params = { service_slug: 'service-slug', user_id: user_id, fingerprint_with_prefix: '28d-fingerprint' }
@@ -49,6 +49,32 @@ RSpec.describe DownloadsController, type: :controller do
                          payload: payload_query_string }
           get :show, params: url_params
           expect(response).to be_forbidden
+        end
+      end
+
+      context 'when jwt subject claim mismatches' do
+        let(:jwt) { JWT.encode({sub: "foo-#{user_id}", iat: Time.current.to_i}, private_key, 'RS256') }
+        let(:payload_query_string) do
+          json = {}.to_json
+          base64 = Base64.strict_encode64(json)
+        end
+        let(:headers) do
+          {
+            'CONTENT_TYPE' => 'application/json',
+            'x-access-token-v2' => jwt,
+            'x-encrypted-user-id-and-token' => 'foo'
+          }
+        end
+
+        it 'returns error' do
+          url_params = { service_slug: 'service-slug',
+                         user_id: user_id,
+                         fingerprint_with_prefix: '28d-fingerprint',
+                         payload: payload_query_string }
+          get :show, params: url_params
+
+          expect(response).to be_server_error
+          expect(JSON.parse(response.body).dig('errors', 0, 'message')).to eql('Concerns::JWTAuthentication::SubjectMismatchError')
         end
       end
     end
