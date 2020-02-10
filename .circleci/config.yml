@@ -14,8 +14,11 @@ jobs:
           command: 'make spec'
   build_and_deploy_to_test:
     working_directory: ~/circle/git/fb-user-filestore
-    docker:
-      - image: asmega/fb-builder:latest
+    docker: &ecr_base_image
+      - image: $AWS_ECR_ACCOUNT_URL
+        aws_auth:
+          aws_access_key_id: $AWS_ACCESS_KEY_ID
+          aws_secret_access_key: $AWS_SECRET_ACCESS_KEY
     steps:
       - checkout
       - add_ssh_keys:
@@ -45,8 +48,7 @@ jobs:
           command: './scripts/circleci_deploy.sh test production $KUBE_TOKEN_TEST_PRODUCTION'
   build_and_deploy_to_live:
     working_directory: ~/circle/git/fb-user-filestore
-    docker:
-      - image: asmega/fb-builder:latest
+    docker: *ecr_base_image
     steps:
       - checkout
       - add_ssh_keys:
