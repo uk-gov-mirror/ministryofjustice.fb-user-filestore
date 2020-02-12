@@ -2,6 +2,8 @@
 
 # fb-user-filestore
 
+A Ruby on Rails application to handle file uploads from forms on the Form Builder platform
+
 ## Making API calls
 
 To craft calls to the API the below script can be used from the rails console.
