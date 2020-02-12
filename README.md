@@ -2,24 +2,6 @@
 
 # fb-user-filestore
 
-## Environment Variables
-
-Form Builder API service that allows files to be stored and retrieved. This
-Rails app is an internal API to handle file storage with AWS S3
-
-The following environment variables are required for this application to work
-correctly.
-
-- `SERVICE_TOKEN_CACHE_ROOT_URL` - http/https of location of service token cache Rails application
-- `MAX_IAT_SKEW_SECONDS` - max time a signed JWT is allowed to deviate from time of submission
-- `AWS_ACCESS_KEY_ID`
-- `AWS_SECRET_ACCESS_KEY`
-- `AWS_REGION`
-- `AWS_S3_BUCKET_NAME` - Bucket name to upload to and download from
-- `KEY_ENCRYPTION_IV` - must be 16 characters - initialisation vector to determine the key (filename) for the uploaded file
-- `ENCRYPTION_KEY` - The AES-256-CBC key used for encryption / decryption
-- `ENCRYPTION_IV` - Initialization Vector (IV) for the AES-256-CBC
-
 ## Making API calls
 
 To craft calls to the API the below script can be used from the rails console.
