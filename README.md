@@ -1,24 +1,24 @@
-# fb-user-filestore
 [![CircleCI](https://circleci.com/gh/ministryofjustice/fb-user-filestore/tree/master.svg?style=svg)](https://circleci.com/gh/ministryofjustice/fb-user-filestore/tree/master)
-[![Build Status](https://travis-ci.org/ministryofjustice/fb-user-filestore.svg?branch=master)](https://travis-ci.org/ministryofjustice/fb-user-filestore)
 
-## Environment Variables
+# fb-user-filestore
 
-Form Builder API service that allows files to be stored and retrieved. This
-Rails app is an internal API to handle file storage with AWS S3
+A Ruby on Rails application to handle file uploads from forms on the Form Builder platform
 
-The following environment variables are required for this application to work
-correctly.
+## Running tests
 
-- `SERVICE_TOKEN_CACHE_ROOT_URL` - http/https of location of service token cache Rails application
-- `MAX_IAT_SKEW_SECONDS` - max time a signed JWT is allowed to deviate from time of submission
-- `AWS_ACCESS_KEY_ID`
-- `AWS_SECRET_ACCESS_KEY`
-- `AWS_REGION`
-- `AWS_S3_BUCKET_NAME` - Bucket name to upload to and download from
-- `KEY_ENCRYPTION_IV` - must be 16 characters - initialisation vector to determine the key (filename) for the uploaded file
-- `ENCRYPTION_KEY` - The AES-256-CBC key used for encryption / decryption
-- `ENCRYPTION_IV` - Initialization Vector (IV) for the AES-256-CBC
+Prerequisites:
+
+- Docker
+
+```sh
+make spec
+```
+
+## Deployment
+
+Continuous Integration (CI) is enabled on this project via CircleCI.
+
+On merge to master tests are executed and if green deployed to the test environment. This build can then be promoted to production
 
 ## Making API calls
 
@@ -43,12 +43,4 @@ response = `curl -X GET --header "x-access-token: #{JWT.encode(jwt_payload, 'ser
 hash = JSON.parse(response)
 
 File.open('/tmp/out', 'wb') {|f| f.write Base64.strict_decode64(hash['file']) }
-```
-
-## Building docker image
-
-You can build a docker image with the following command
-
-```sh
-docker build .
 ```
