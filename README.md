@@ -4,6 +4,16 @@
 
 A Ruby on Rails application to handle file uploads from forms on the Form Builder platform
 
+## Running tests
+
+Prerequisites:
+
+- Docker
+
+```sh
+make spec
+```
+
 ## Making API calls
 
 To craft calls to the API the below script can be used from the rails console.
