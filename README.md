@@ -14,6 +14,12 @@ Prerequisites:
 make spec
 ```
 
+## Deployment
+
+Continuous Integration (CI) is enabled on this project via CircleCI.
+
+On merge to master tests are executed and if green deployed to the test environment. This build can then be promoted to production
+
 ## Making API calls
 
 To craft calls to the API the below script can be used from the rails console.
