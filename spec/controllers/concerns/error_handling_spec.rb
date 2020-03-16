@@ -12,7 +12,7 @@ RSpec.describe ApplicationController do
 
     it 'calls raven (sentry) with exception' do
       expect(Raven).to receive(:capture_exception)
-      get :index
+      get :index, format: :json
     end
   end
 
@@ -26,7 +26,7 @@ RSpec.describe ApplicationController do
 
     it 'does not call raven (sentry)' do
       expect(Raven).to_not receive(:capture_exception)
-      get :index
+      get :index, format: :json
     end
   end
 end

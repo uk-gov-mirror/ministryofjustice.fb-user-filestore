@@ -4,10 +4,17 @@ RSpec.describe 'user filestore API', type: :request do
   let(:service_slug) { 'my-service' }
   let(:user_identifier) { SecureRandom::uuid }
   let(:headers) do
-    { 'content-type' => 'application/json' }
+    {
+      'content-type' => 'application/json',
+      'ACCEPT' => 'application/json'
+    }
   end
 
   describe 'request error messages' do
+    before do
+      allow_any_instance_of(ApplicationController).to receive(:enforce_json_only).and_return(true)
+    end
+
     context 'exception TokenNotValidError raised' do
       before do
         allow_any_instance_of(UploadsController).to receive(:verify_token!).and_raise(Exceptions::TokenNotValidError)

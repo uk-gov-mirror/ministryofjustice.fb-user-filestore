@@ -31,7 +31,7 @@ RSpec.describe DownloadsController, type: :controller do
       context 'missing payload' do
         it 'returns error' do
           url_params = { service_slug: 'service-slug', user_id: user_id, fingerprint_with_prefix: '28d-fingerprint' }
-          get :show, params: url_params
+          get :show, params: url_params, format: :json
           expect(response).to be_forbidden
         end
       end
@@ -47,7 +47,7 @@ RSpec.describe DownloadsController, type: :controller do
                          user_id: user_id,
                          fingerprint_with_prefix: '28d-fingerprint',
                          payload: payload_query_string }
-          get :show, params: url_params
+          get :show, params: url_params, format: :json
           expect(response).to be_forbidden
         end
       end
@@ -71,7 +71,7 @@ RSpec.describe DownloadsController, type: :controller do
                          user_id: user_id,
                          fingerprint_with_prefix: '28d-fingerprint',
                          payload: payload_query_string }
-          get :show, params: url_params
+          get :show, params: url_params, format: :json
 
           expect(response).to be_server_error
           expect(JSON.parse(response.body).dig('errors', 0, 'message')).to eql('Concerns::JWTAuthentication::SubjectMismatchError')
