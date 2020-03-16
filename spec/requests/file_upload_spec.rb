@@ -11,7 +11,6 @@ RSpec.describe 'FileUpload API', type: :request do
   let(:headers) {
     {
       'content-type' => 'application/json',
-      'ACCEPT' => 'application/json',
       'x-access-token-v2' => jwt
     }
   }

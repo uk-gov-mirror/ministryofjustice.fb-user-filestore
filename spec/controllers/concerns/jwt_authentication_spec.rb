@@ -29,7 +29,7 @@ RSpec.describe 'Concerns::JWTAuthentication' do
     allow(fake_client).to receive(:public_key_for).with(service_slug).and_return(public_key)
 
     request.headers.merge!(headers)
-    get :index, params: { service_slug: service_slug }, format: :json
+    get :index, params: { service_slug: service_slug }
   end
 
   context 'with no x-access-token header' do

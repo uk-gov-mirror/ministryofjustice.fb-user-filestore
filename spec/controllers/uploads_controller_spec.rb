@@ -41,7 +41,7 @@ RSpec.describe UploadsController, type: :controller do
           url_params = { service_slug: 'service-slug', user_id: user_id }
           json_params = json
           json_params.delete(:file)
-          post :create, params: url_params.merge(json_params), format: :json
+          post :create, params: url_params.merge(json_params)
           expect(response).to be_bad_request
         end
       end
@@ -50,7 +50,7 @@ RSpec.describe UploadsController, type: :controller do
         it 'returns error' do
           url_params = { service_slug: 'service-slug', user_id: '' }
           json_params = json
-          post :create, params: url_params.merge(json_params), format: :json
+          post :create, params: url_params.merge(json_params)
           expect(response).to be_bad_request
         end
       end
@@ -59,7 +59,7 @@ RSpec.describe UploadsController, type: :controller do
         it 'returns error' do
           url_params = { service_slug: '', user_id: user_id }
           json_params = json
-          post :create, params: url_params.merge(json_params), format: :json
+          post :create, params: url_params.merge(json_params)
           expect(response).to be_bad_request
         end
       end
@@ -69,7 +69,7 @@ RSpec.describe UploadsController, type: :controller do
           url_params = { service_slug: 'service-slug', user_id: user_id }
           json_params = json
           json_params.delete(:encrypted_user_id_and_token)
-          post :create, params: url_params.merge(json_params), format: :json
+          post :create, params: url_params.merge(json_params)
           expect(response).to be_forbidden
         end
       end
@@ -79,7 +79,7 @@ RSpec.describe UploadsController, type: :controller do
           url_params = { service_slug: 'service-slug', user_id: user_id }
           json_params = json
           json_params.delete(:policy)
-          post :create, params: url_params.merge(json_params), format: :json
+          post :create, params: url_params.merge(json_params)
           expect(response).to be_bad_request
         end
       end
@@ -89,7 +89,7 @@ RSpec.describe UploadsController, type: :controller do
           url_params = { service_slug: 'service-slug', user_id: user_id }
           json_params = json
           json_params[:policy].delete(:max_size)
-          post :create, params: url_params.merge(json_params), format: :json
+          post :create, params: url_params.merge(json_params)
           expect(response).to be_bad_request
         end
       end
@@ -101,7 +101,7 @@ RSpec.describe UploadsController, type: :controller do
           url_params = { service_slug: 'service-slug', user_id: user_id }
           json_params = json
           json_params[:policy].delete(:allowed_types)
-          post :create, params: url_params.merge(json_params), format: :json
+          post :create, params: url_params.merge(json_params)
           expect(controller.params[:policy][:allowed_types]).to eql(['*/*'])
           expect(response).to be_successful
         end
@@ -112,7 +112,7 @@ RSpec.describe UploadsController, type: :controller do
           url_params = { service_slug: 'service-slug', user_id: user_id }
           json_params = json
           json_params[:policy][:allowed_types] = []
-          post :create, params: url_params.merge(json_params), format: :json
+          post :create, params: url_params.merge(json_params)
           expect(controller.params[:policy][:allowed_types]).to eql(['*/*'])
           expect(response).to be_successful
         end
@@ -123,7 +123,7 @@ RSpec.describe UploadsController, type: :controller do
           url_params = { service_slug: 'service-slug', user_id: user_id }
           json_params = json
           json_params[:policy].delete(:expires)
-          post :create, params: url_params.merge(json_params), format: :json
+          post :create, params: url_params.merge(json_params)
           expect(controller.params[:policy][:expires]).to eql(28)
           expect(response).to be_successful
         end
@@ -138,14 +138,14 @@ RSpec.describe UploadsController, type: :controller do
       it 'returns a 400' do
         url_params = { service_slug: 'service-slug', user_id: user_id }
         json_params = json
-        post :create, params: url_params.merge(json_params), format: :json
+        post :create, params: url_params.merge(json_params)
         expect(response.status).to eql(400)
       end
 
       it 'returns virus error message' do
         url_params = { service_slug: 'service-slug', user_id: user_id }
         json_params = json
-        post :create, params: url_params.merge(json_params), format: :json
+        post :create, params: url_params.merge(json_params)
 
         hash = JSON.parse(response.body)
 
