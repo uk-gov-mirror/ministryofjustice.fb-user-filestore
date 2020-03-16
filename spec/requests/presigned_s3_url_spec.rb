@@ -11,6 +11,7 @@ RSpec.describe 'POST /presigned-s3-url', type: :request do
   let(:headers) do
     {
       'content-type' => 'application/json',
+      'ACCEPT' => 'application/json',
       'X-Encrypted-User-Id-And-Token' => '12345678901234567890123456789012'
     }
   end
