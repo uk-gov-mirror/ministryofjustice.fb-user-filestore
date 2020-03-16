@@ -4,8 +4,7 @@ RSpec.describe 'GET /service/{service_slug}/user/{user_id}/{fingerprint}', type:
   let(:headers) do
     {
       'X-Encrypted-User-Id-And-Token' => '12345678901234567890123456789012',
-      'x-access-token-v2' => jwt,
-      'ACCEPT' => 'application/json'
+      'x-access-token-v2' => jwt
     }
   end
   let(:user_id) { 'user-id' }

@@ -6,8 +6,6 @@ class ApplicationController < ActionController::API
   private
 
   def enforce_json_only
-    unless request.format.json? # rubocop:disable Style/GuardClause
-      render json: { error: 'Format not acceptable' }, status: :not_acceptable
-    end
+    response.status = :unacceptable unless request.format.json?
   end
 end
