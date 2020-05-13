@@ -29,7 +29,6 @@ module Concerns
 
     def verify
       token = request.headers['x-access-token-v2']
-      leeway = ENV['MAX_IAT_SKEW_SECONDS']
 
       begin
         hmac_secret = public_key(params[:service_slug])
@@ -68,6 +67,16 @@ module Concerns
     def public_key(service_slug)
       service = ServiceTokenService.new(service_slug: service_slug)
       service.public_key
+    end
+
+    def leeway
+      @leeway ||= begin
+        if request.headers['x-jwt-skew-override'].blank?
+          ENV['MAX_IAT_SKEW_SECONDS']
+        else
+          request.headers['x-jwt-skew-override']
+        end
+      end
     end
   end
 end

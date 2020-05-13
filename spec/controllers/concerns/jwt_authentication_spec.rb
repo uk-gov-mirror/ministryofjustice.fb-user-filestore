@@ -134,5 +134,25 @@ RSpec.describe 'Concerns::JWTAuthentication' do
         end
       end
     end
+
+    context 'when a JWT skew override header with enough extra time is supplied' do
+      let(:headers) do
+        {
+          'content-type' => 'image/jpeg',
+          'x-access-token-v2' => token,
+          'x-jwt-skew-override' => '600'
+        }
+      end
+      let(:iat) { Time.current.to_i - 300.seconds }
+      let(:algorithm) { 'RS256' }
+      let(:private_key) { OpenSSL::PKey::RSA.new(Base64.strict_decode64(encoded_private_key)) }
+      let(:token) do
+        JWT.encode payload.merge(iat: iat), private_key, algorithm
+      end
+
+      it 'successfully validates the JWT' do
+        expect(response.status).to eq(200)
+      end
+    end
   end
 end
