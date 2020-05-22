@@ -138,7 +138,7 @@ RSpec.describe 'FileUpload API', type: :request do
 
         it 'returns JSON with invalid type content' do
           result = JSON.parse(response.body)
-          expect(result['name']).to eq('accept')
+          expect(result['name']).to eq('invalid.unsupported-file-type')
         end
       end
 
@@ -157,7 +157,7 @@ RSpec.describe 'FileUpload API', type: :request do
 
         it 'returns JSON with invalid type content' do
           result = JSON.parse(response.body)
-          expect(result['name']).to eq('accept')
+          expect(result['name']).to eq('invalid.unsupported-file-type')
         end
       end
     end
