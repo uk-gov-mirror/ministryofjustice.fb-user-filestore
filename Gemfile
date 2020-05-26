@@ -7,7 +7,7 @@ gem 'aws-sdk-s3', '~> 1'
 gem 'bootsnap', '>= 1.1.0', require: false
 gem 'jwt'
 gem 'puma', '~> 4.3'
-gem 'rails', '~> 6.0.2'
+gem 'rails', '~> 6.0.3'
 gem 'sentry-raven'
 gem 'tzinfo-data'
 
