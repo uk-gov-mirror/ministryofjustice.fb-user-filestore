@@ -101,6 +101,11 @@ spec:
               secretKeyRef:
                 name: json-output-attachments-s3-bucket-{{ .Values.environmentName }}
                 key: secret_access_key
+           - name: METRICS_ACCESS_KEY
+             valueFrom:
+               secretKeyRef:
+                 name: fb-user-filestore-api-secrets-{{ .Values.environmentName }}
+                 key: metrics_access_key
       volumes:
         - name: tmp-files
           emptyDir: {}
