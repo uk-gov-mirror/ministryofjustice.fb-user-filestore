@@ -12,8 +12,8 @@ test:
 	$(eval export env_stub=test)
 	@true
 
-integration:
-	$(eval export env_stub=integration)
+pentest:
+	$(eval export env_stub=pentest)
 	@true
 
 live:
