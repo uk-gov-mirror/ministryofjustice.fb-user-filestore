@@ -1,11 +1,14 @@
 ---
 # web front-end
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: "fb-user-filestore-api-{{ .Values.environmentName }}"
 spec:
   replicas: 3
+  selector:
+    matchLabels:
+      app: "fb-user-filestore-api-{{ .Values.environmentName }}"
   template:
     metadata:
       labels:
