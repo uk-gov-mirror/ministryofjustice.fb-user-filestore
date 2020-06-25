@@ -76,37 +76,6 @@ jobs:
       - run:
           name: deploy to live production
           command: './scripts/circleci_deploy.sh live production $KUBE_TOKEN_LIVE_PRODUCTION'
-  build_and_deploy_to_pentest:
-    working_directory: ~/circle/git/fb-user-filestore
-    docker: *ecr_base_image
-    steps:
-      - checkout
-      - add_ssh_keys:
-          fingerprints:
-            - "71:2d:7e:c6:9c:9f:62:4e:0b:e3:d8:8d:5e:ee:ae:c2"
-      - run:
-          name: checkout fb-user-filestore-deploy
-          command: "GIT_SSH_COMMAND='ssh -v -i ~/.ssh/id_rsa_712d7ec69c9f624e0be3d88d5eeeaec2 -o \"IdentitiesOnly=yes\"' git clone git@github.com:ministryofjustice/fb-user-filestore-deploy.git ~/circle/git/fb-user-filestore-deploy"
-      - run:
-          name: persist git crypt key to disk
-          command: "echo $ENCODED_GIT_CRYPT_KEY | base64 -d > /root/circle/git_crypt.key"
-      - run:
-          name: unlock git crypt
-          command: "cd ~/circle/git/fb-user-filestore-deploy && git-crypt unlock /root/circle/git_crypt.key"
-      - run:
-          name: npm install
-          command: 'npm install'
-      - setup_remote_docker
-      - run:
-          name: build and deploy docker images
-          command: './scripts/circleci_build.sh pentest'
-      - run:
-          name: deploy to pentest dev
-          command: './scripts/circleci_deploy.sh pentest dev $KUBE_TOKEN_PENTEST_DEV'
-      - run:
-          name: deploy to pentest production
-          command: './scripts/circleci_deploy.sh pentest production $KUBE_TOKEN_PENTEST_PRODUCTION'
-
   trigger_acceptance_tests:
     docker:
       - image: circleci/ruby:latest
