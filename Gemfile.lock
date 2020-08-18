@@ -110,7 +110,7 @@ GEM
     i18n (1.8.4)
       concurrent-ruby (~> 1.0)
     jmespath (1.4.0)
-    jwt (2.2.1)
+    jwt (2.2.2)
     keen (1.1.1)
       addressable (~> 2.5)
       multi_json (~> 1.12)
