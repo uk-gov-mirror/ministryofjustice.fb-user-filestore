@@ -21,61 +21,77 @@ jobs:
           aws_secret_access_key: $AWS_SECRET_ACCESS_KEY
     steps:
       - checkout
+      - setup_remote_docker
       - add_ssh_keys:
           fingerprints:
             - "71:2d:7e:c6:9c:9f:62:4e:0b:e3:d8:8d:5e:ee:ae:c2"
       - run:
-          name: checkout fb-user-filestore-deploy
-          command: "GIT_SSH_COMMAND='ssh -v -i ~/.ssh/id_rsa_712d7ec69c9f624e0be3d88d5eeeaec2 -o \"IdentitiesOnly=yes\"' git clone git@github.com:ministryofjustice/fb-user-filestore-deploy.git ~/circle/git/fb-user-filestore-deploy"
+          name: Setup base environment variable
+          command: |
+            echo "export BUILD_SHA=$CIRCLE_SHA1" >> $BASH_ENV
+            echo "export SSH_FILE_FOR_SECRETS=~/.ssh/id_rsa_712d7ec69c9f624e0be3d88d5eeeaec2" >> $BASH_ENV
       - run:
-          name: persist git crypt key to disk
-          command: "echo $ENCODED_GIT_CRYPT_KEY | base64 -d > /root/circle/git_crypt.key"
+          name: cloning deploy scripts
+          command: 'git clone git@github.com:ministryofjustice/fb-deploy.git deploy-scripts'
       - run:
-          name: unlock git crypt
-          command: "cd ~/circle/git/fb-user-filestore-deploy && git-crypt unlock /root/circle/git_crypt.key"
-      - run:
-          name: npm install
-          command: 'npm install'
-      - setup_remote_docker
-      - run:
-          name: build and deploy docker images
-          command: './scripts/circleci_build.sh test'
+          name: build and push docker images
+          environment:
+            ENVIRONMENT_NAME: test
+          command: './deploy-scripts/bin/build'
       - run:
           name: deploy to test dev
-          command: './scripts/circleci_deploy.sh test dev $KUBE_TOKEN_TEST_DEV'
+          environment:
+            APPLICATION_NAME: fb-user-filestore
+            PLATFORM_ENV: test
+            DEPLOYMENT_ENV: dev
+            K8S_NAMESPACE: formbuilder-platform-test-dev
+          command: './deploy-scripts/bin/deploy'
       - run:
           name: deploy to test production
-          command: './scripts/circleci_deploy.sh test production $KUBE_TOKEN_TEST_PRODUCTION'
+          environment:
+            APPLICATION_NAME: fb-user-filestore
+            PLATFORM_ENV: test
+            DEPLOYMENT_ENV: production
+            K8S_NAMESPACE: formbuilder-platform-test-production
+          command: './deploy-scripts/bin/deploy'
   build_and_deploy_to_live:
     working_directory: ~/circle/git/fb-user-filestore
     docker: *ecr_base_image
     steps:
       - checkout
+      - setup_remote_docker
       - add_ssh_keys:
           fingerprints:
             - "71:2d:7e:c6:9c:9f:62:4e:0b:e3:d8:8d:5e:ee:ae:c2"
       - run:
-          name: checkout fb-user-filestore-deploy
-          command: "GIT_SSH_COMMAND='ssh -v -i ~/.ssh/id_rsa_712d7ec69c9f624e0be3d88d5eeeaec2 -o \"IdentitiesOnly=yes\"' git clone git@github.com:ministryofjustice/fb-user-filestore-deploy.git ~/circle/git/fb-user-filestore-deploy"
+          name: Setup base environment variable
+          command: |
+            echo "export BUILD_SHA=$CIRCLE_SHA1" >> $BASH_ENV
+            echo "export SSH_FILE_FOR_SECRETS=~/.ssh/id_rsa_712d7ec69c9f624e0be3d88d5eeeaec2" >> $BASH_ENV
       - run:
-          name: persist git crypt key to disk
-          command: "echo $ENCODED_GIT_CRYPT_KEY | base64 -d > /root/circle/git_crypt.key"
+          name: cloning deploy scripts
+          command: 'git clone git@github.com:ministryofjustice/fb-deploy.git deploy-scripts'
       - run:
-          name: unlock git crypt
-          command: "cd ~/circle/git/fb-user-filestore-deploy && git-crypt unlock /root/circle/git_crypt.key"
-      - run:
-          name: npm install
-          command: 'npm install'
-      - setup_remote_docker
-      - run:
-          name: build and deploy docker images
-          command: './scripts/circleci_build.sh live'
+          name: build and push docker images
+          environment:
+            ENVIRONMENT_NAME: live
+          command: './deploy-scripts/bin/build'
       - run:
           name: deploy to live dev
-          command: './scripts/circleci_deploy.sh live dev $KUBE_TOKEN_LIVE_DEV'
+          environment:
+            APPLICATION_NAME: fb-user-filestore
+            PLATFORM_ENV: live
+            DEPLOYMENT_ENV: dev
+            K8S_NAMESPACE: formbuilder-platform-live-dev
+          command: './deploy-scripts/bin/deploy'
       - run:
           name: deploy to live production
-          command: './scripts/circleci_deploy.sh live production $KUBE_TOKEN_LIVE_PRODUCTION'
+          environment:
+            APPLICATION_NAME: fb-user-filestore
+            PLATFORM_ENV: live
+            DEPLOYMENT_ENV: production
+            K8S_NAMESPACE: formbuilder-platform-live-production
+          command: './deploy-scripts/bin/deploy'
   trigger_acceptance_tests:
     docker:
       - image: circleci/ruby:latest
