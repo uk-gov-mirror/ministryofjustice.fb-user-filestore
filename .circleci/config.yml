@@ -96,9 +96,6 @@ jobs:
     working_directory: ~/circle/git/fb-user-filestore
     docker: *ecr_base_image
     steps:
-      - add_ssh_keys:
-          fingerprints:
-            - "71:2d:7e:c6:9c:9f:62:4e:0b:e3:d8:8d:5e:ee:ae:c2"
       - run:
           name: cloning deploy scripts
           command: 'git clone git@github.com:ministryofjustice/fb-deploy.git deploy-scripts'
