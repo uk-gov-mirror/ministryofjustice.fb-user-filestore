@@ -22,15 +22,15 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker
-      - add_ssh_keys:
+      - add_ssh_keys: &ssh_keys
           fingerprints:
             - "71:2d:7e:c6:9c:9f:62:4e:0b:e3:d8:8d:5e:ee:ae:c2"
-      - run:
+      - run: &base_environment_variables
           name: Setup base environment variable
           command: |
             echo "export BUILD_SHA=$CIRCLE_SHA1" >> $BASH_ENV
             echo "export SSH_FILE_FOR_SECRETS=~/.ssh/id_rsa_712d7ec69c9f624e0be3d88d5eeeaec2" >> $BASH_ENV
-      - run:
+      - run: &deploy_scripts
           name: cloning deploy scripts
           command: 'git clone git@github.com:ministryofjustice/fb-deploy.git deploy-scripts'
       - run:
@@ -60,17 +60,9 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker
-      - add_ssh_keys:
-          fingerprints:
-            - "71:2d:7e:c6:9c:9f:62:4e:0b:e3:d8:8d:5e:ee:ae:c2"
-      - run:
-          name: Setup base environment variable
-          command: |
-            echo "export BUILD_SHA=$CIRCLE_SHA1" >> $BASH_ENV
-            echo "export SSH_FILE_FOR_SECRETS=~/.ssh/id_rsa_712d7ec69c9f624e0be3d88d5eeeaec2" >> $BASH_ENV
-      - run:
-          name: cloning deploy scripts
-          command: 'git clone git@github.com:ministryofjustice/fb-deploy.git deploy-scripts'
+      - add_ssh_keys: *ssh_keys
+      - run: *base_environment_variables
+      - run: *deploy_scripts
       - run:
           name: build and push docker images
           environment:
@@ -92,15 +84,14 @@ jobs:
             DEPLOYMENT_ENV: production
             K8S_NAMESPACE: formbuilder-platform-live-production
           command: './deploy-scripts/bin/deploy'
-  trigger_acceptance_tests:
-    working_directory: ~/circle/git/fb-user-filestore
+  acceptance_tests:
     docker: *ecr_base_image
+    resource_class: large
     steps:
+      - setup_remote_docker
+      - run: *deploy_scripts
       - run:
-          name: cloning deploy scripts
-          command: 'git clone git@github.com:ministryofjustice/fb-deploy.git deploy-scripts'
-      - run:
-          name: "Trigger Acceptance Tests"
+          name: Run acceptance tests
           command: './deploy-scripts/bin/acceptance_tests'
 
 workflows:
@@ -114,7 +105,7 @@ workflows:
           filters:
             branches:
               only: master
-      - trigger_acceptance_tests:
+      - acceptance_tests:
           requires:
             - build_and_deploy_to_test
           filters:
@@ -123,7 +114,7 @@ workflows:
       - confirm_production_deploy:
           type: approval
           requires:
-            - trigger_acceptance_tests
+            - acceptance_tests
       - build_and_deploy_to_live:
           requires:
             - confirm_production_deploy
