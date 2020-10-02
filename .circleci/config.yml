@@ -140,6 +140,3 @@ workflows:
       - build_and_deploy_to_live:
           requires:
             - confirm_production_deploy
-      - smoke_tests:
-          requires:
-            - build_and_deploy_to_live
