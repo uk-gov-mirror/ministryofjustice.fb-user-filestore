@@ -8,7 +8,7 @@ gem 'bootsnap', '>= 1.1.0', require: false
 gem 'jwt'
 gem 'metrics_adapter', '0.2.0'
 gem 'puma', '~> 5.1'
-gem 'rails', '~> 6.1.0'
+gem 'rails', '~> 6.1.1'
 gem 'sentry-raven'
 gem 'tzinfo-data'
 
